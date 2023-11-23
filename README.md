@@ -1,7 +1,7 @@
 <h1>School Enrollment System</h1>
 
 <h2>Problem Statement & Product Vision</h2>
-Several parents and general schools have complained about the complex enrollment process of the students. So, to solve this problem, we have come with an <b>amazing</b> idea. Why not make it automated and save lots of time for both sides? That is why we decided to implement a web platform where parents can register their children and the school principals can either accept or decline their applications. The main users that will interact with the application will be <i>Parents</i>, <i>Principals</i> and <i>Teachers</i>. <br><br>
+Several parents and general schools have complained about the complex enrollment process of the students. So, to solve this problem, we have come with an <b>amazing</b> idea. Why not make it automated and save lots of time for both sides? There is an obvious need for a web platform where parents can register their children and the school principals can either accept or decline their applications. The main users that will interact with the application will be <i>Parents</i>, <i>Principals</i> and <i>Teachers</i>. <br><br>
 Parents can apply to multiple schools during a set period of time, Principals can see the applications to their school and accept/decline applications and Teachers can see a list of students they are responsible for.
 
 <!-- <h2>Product features & functionalities</h2>

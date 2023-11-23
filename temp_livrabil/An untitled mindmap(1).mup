@@ -1,0 +1,216 @@
+{
+  "formatVersion": 3,
+  "id": "root",
+  "ideas": {
+    "1": {
+      "title": "School Enrollment System\n",
+      "id": 1,
+      "attr": {
+        "position": [
+          -184,
+          -37,
+          1
+        ]
+      },
+      "ideas": {
+        "1": {
+          "title": "Principal",
+          "id": 2,
+          "ideas": {
+            "1": {
+              "title": "Classes\n",
+              "id": 15,
+              "ideas": {
+                "1": {
+                  "title": "Assigns  teacher to class\n",
+                  "id": 21
+                },
+                "2": {
+                  "title": "Assigns students to classs\n",
+                  "id": 22
+                },
+                "3": {
+                  "title": "Create class\n",
+                  "id": 23
+                },
+                "4": {
+                  "title": "Update class info\n",
+                  "id": 24
+                }
+              },
+              "attr": {
+                "style": {
+                  "width": 83
+                },
+                "position": [
+                  104,
+                  -117,
+                  3
+                ]
+              }
+            },
+            "2": {
+              "title": "Register School\n",
+              "id": 16,
+              "attr": {
+                "position": [
+                  119,
+                  -58,
+                  2
+                ]
+              }
+            },
+            "3": {
+              "title": "Invite users to be teachers\n",
+              "id": 17,
+              "attr": {
+                "position": [
+                  94,
+                  -8,
+                  1
+                ]
+              }
+            },
+            "4": {
+              "title": "Accepts/Declines applications\n",
+              "id": 18
+            },
+            "5": {
+              "title": "Update school info\n",
+              "id": 19
+            }
+          }
+        },
+        "11": {
+          "title": "Administrator",
+          "id": 25,
+          "ideas": {
+            "1": {
+              "title": "See a list of principals\n",
+              "id": 26
+            },
+            "2": {
+              "title": "Invite users to be principals\n",
+              "id": 27
+            },
+            "3": {
+              "title": "Start application period\n",
+              "id": 28
+            }
+          }
+        },
+        "21": {
+          "title": "Guest",
+          "id": 29,
+          "attr": {
+            "position": [
+              115,
+              234.79998779296875,
+              1
+            ]
+          },
+          "ideas": {
+            "1": {
+              "title": "See introductory page\n",
+              "id": 30
+            },
+            "2": {
+              "title": "Log in\n",
+              "id": 31
+            },
+            "3": {
+              "title": "Register",
+              "id": 32
+            }
+          }
+        },
+        "-1": {
+          "title": "Parent (Basic User)\n",
+          "id": 34,
+          "ideas": {
+            "1": {
+              "title": "Apply to a school for each child\n",
+              "id": 35
+            },
+            "2": {
+              "title": "See a list of vacant spots after application period ends\n",
+              "id": 36
+            },
+            "3": {
+              "title": "See a list of schools\n",
+              "id": 37
+            },
+            "4": {
+              "title": "See school details\n",
+              "id": 38
+            },
+            "5": {
+              "title": "Manage account\n",
+              "id": 39,
+              "ideas": {
+                "1": {
+                  "title": "See a list of applications\n",
+                  "id": 40
+                },
+                "2": {
+                  "title": "See application status\n",
+                  "id": 41,
+                  "ideas": {}
+                },
+                "3": {
+                  "title": "Add children\n",
+                  "id": 43,
+                  "ideas": {}
+                },
+                "4": {
+                  "title": "Edit children info\n",
+                  "id": 44
+                },
+                "5": {
+                  "title": "Edit account info\n",
+                  "id": 45
+                },
+                "6": {
+                  "title": "Delete account\n",
+                  "id": 46
+                },
+                "7": {
+                  "title": "Confirm / Decline enrollment\n",
+                  "id": 49,
+                  "attr": {}
+                },
+                "8": {
+                  "title": "See registered children\n",
+                  "id": 51,
+                  "ideas": {}
+                },
+                "9": {
+                  "title": "See info about schools that children are enrolled into\n",
+                  "id": 53
+                }
+              }
+            }
+          }
+        },
+        "-2": {
+          "title": "Teacher\n",
+          "id": 47,
+          "attr": {
+            "position": [
+              211,
+              314.79998779296875,
+              2
+            ]
+          },
+          "ideas": {
+            "1": {
+              "title": "See a list of students they are responsible for\n",
+              "id": 48
+            }
+          }
+        }
+      }
+    }
+  },
+  "title": "School Enrollment System\n"
+}
