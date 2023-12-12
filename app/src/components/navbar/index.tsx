@@ -9,6 +9,10 @@ export const NavBar = () => {
       name: "Home",
       path: "/acasa",
     },
+    {
+      name: "Scoli",
+      path: "/scoli",
+    },
   ]
   const guestPagesRight = [
     {
