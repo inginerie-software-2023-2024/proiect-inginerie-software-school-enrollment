@@ -4,6 +4,7 @@ import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +13,8 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class SchoolService {
-    private final SchoolRepository schoolRepository;
+    @Autowired
+    private SchoolRepository schoolRepository;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();

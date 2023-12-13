@@ -3,6 +3,7 @@ package SchoolEnrollmentSystem.backend.controller;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.service.SchoolService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +13,8 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping("/schools")
 public class SchoolController {
-    private final SchoolService schoolService;
+    @Autowired
+    private SchoolService schoolService;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
