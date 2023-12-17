@@ -11,20 +11,14 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class School {
+public class Parent {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
-
-    private String location;
-
-    private Integer points;
+    @OneToOne
+    private User user;
 
     @OneToMany
-    private List<Class> classes;
-
-    @OneToOne
-    private Director director;
+    private List<Student> students;
 }

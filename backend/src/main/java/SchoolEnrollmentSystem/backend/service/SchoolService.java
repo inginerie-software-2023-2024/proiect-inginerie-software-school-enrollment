@@ -1,7 +1,9 @@
 package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
+import SchoolEnrollmentSystem.backend.persistence.Director;
 import SchoolEnrollmentSystem.backend.persistence.School;
+import SchoolEnrollmentSystem.backend.repository.DirectorRepository;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.util.Optional;
 public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
+    private DirectorRepository directorRepository;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();
@@ -27,6 +30,10 @@ public class SchoolService {
     }
 
     public void deleteSchool(Integer id) {
+        Director director = getSchoolById(id).getDirector();
+        director.setSchool(null);
+        directorRepository.save(director);
+
         schoolRepository.delete(getSchoolById(id));
     }
 
