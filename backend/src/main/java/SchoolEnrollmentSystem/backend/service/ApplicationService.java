@@ -1,13 +1,13 @@
 package SchoolEnrollmentSystem.backend.service;
 
-import SchoolEnrollmentSystem.backend.repository.TeacherRepostiory;
+import SchoolEnrollmentSystem.backend.repository.ApplicationRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class TeacherService {
+public class ApplicationService {
     @Autowired
-    private TeacherRepostiory teacherRepostiory;
+    private ApplicationRepository applicationRepository;
 }

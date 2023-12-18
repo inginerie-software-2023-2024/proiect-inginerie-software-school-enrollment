@@ -5,13 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class Parent {
+public class Principal {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -28,6 +26,6 @@ public class Parent {
 
     private String password;
 
-    @OneToMany
-    private List<Student> students;
+    @OneToOne
+    private School school;
 }

@@ -14,8 +14,17 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
-    private User user;
+    private String username;
+
+    private String firstName;
+
+    private String lastName;
+
+    private String email;
+
+    private String phoneNumber;
+
+    private String password;
 
     @OneToOne
     private Class teachingClass;

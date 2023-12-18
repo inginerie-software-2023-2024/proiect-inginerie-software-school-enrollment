@@ -26,5 +26,5 @@ public class School {
     private List<Class> classes;
 
     @OneToOne
-    private Director director;
+    private Principal principal;
 }
