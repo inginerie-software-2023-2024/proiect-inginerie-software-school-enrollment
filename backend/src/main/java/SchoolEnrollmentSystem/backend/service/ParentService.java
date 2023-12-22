@@ -9,6 +9,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -24,13 +26,18 @@ public class ParentService {
 
     private void deleteParent(Integer id)
     {
-        Parent parent = parentRepository.getReferenceById(id);
+        Optional<Parent> optionalParent = parentRepository.findById(id);
 
-        for (Student student : parent.getStudents())
-        {
-            studentRepository.deleteById(student.getId());
+        if (optionalParent.isPresent()) {
+            Parent parent = optionalParent.get();
+
+            Set<Student> students = parent.getStudents();
+            studentRepository.deleteAll(students);
+            parentRepository.deleteById(id);
         }
+    }
 
-        parentRepository.deleteById(parent.getId());
+    public Optional<Parent> findById(Integer id) {
+        return parentRepository.findById(id);
     }
 }

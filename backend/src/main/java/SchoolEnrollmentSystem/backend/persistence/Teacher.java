@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -26,6 +27,7 @@ public class Teacher {
 
     private String password;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "teacher")
+    @JsonIgnoreProperties(value = { "teacher", "school" }, allowSetters = true)
     private Class teachingClass;
 }
