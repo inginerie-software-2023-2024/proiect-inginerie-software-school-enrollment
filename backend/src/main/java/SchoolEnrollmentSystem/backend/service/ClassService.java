@@ -1,12 +1,11 @@
 package SchoolEnrollmentSystem.backend.service;
 
-import SchoolEnrollmentSystem.backend.persistence.Principal;
+import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.persistence.Class;
-import SchoolEnrollmentSystem.backend.persistence.Teacher;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
-import SchoolEnrollmentSystem.backend.repository.TeacherRepostiory;
+import SchoolEnrollmentSystem.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,8 +17,8 @@ import java.util.Optional;
 public class ClassService {
     @Autowired
     private ClassRepository classRepository;
-    private TeacherRepostiory teacherRepostiory;
     private SchoolRepository schoolRepository;
+    private UserRepository userRepository;
 
     private void addClass(Class c)
     {
@@ -35,10 +34,10 @@ public class ClassService {
 
             School school = aClass.getSchool();
 
-            Teacher teacher = aClass.getTeacher();
+            User teacher = aClass.getTeacher();
             if (teacher != null) {
                 teacher.setTeachingClass(null);
-                teacherRepostiory.save(teacher);
+                userRepository.save(teacher);
             }
 
             if (school != null) {

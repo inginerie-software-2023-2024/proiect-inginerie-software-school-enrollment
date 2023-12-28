@@ -1,13 +1,11 @@
 package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
-import SchoolEnrollmentSystem.backend.persistence.Principal;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.Application;
 import SchoolEnrollmentSystem.backend.repository.ApplicationRepository;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
-import SchoolEnrollmentSystem.backend.repository.PrincipalRepository;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import java.util.Set;
 public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
-    private PrincipalRepository principalRepository;
     private ClassRepository classRepository;
     private ApplicationRepository applicationRepository;
 

@@ -19,9 +19,17 @@ public class Class {
     @JsonIgnoreProperties(value = { "teachingClass" }, allowSetters = true)
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(unique = true)
-    private Teacher teacher;
+    private User teacher;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "principal", "applications", "classes" }, allowSetters = true)
     private School school;
+
+    public School getSchool() {
+        return school;
+    }
+
+    public User getTeacher() {
+        return teacher;
+    }
 }

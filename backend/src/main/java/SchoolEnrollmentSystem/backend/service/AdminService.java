@@ -37,4 +37,8 @@ public class AdminService {
     public Optional<Admin> findById(Integer id) {
         return adminRepository.findById(id);
     }
+
+    public Admin findByUsername(String username) {
+        return adminRepository.findAll().stream().filter(admin -> admin.getUsername().equals(username)).findFirst().orElse(null);
+    }
 }

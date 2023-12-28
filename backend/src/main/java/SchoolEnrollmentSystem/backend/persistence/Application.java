@@ -23,4 +23,8 @@ public class Application {
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "principal", "applications", "classes" }, allowSetters = true)
     private School school;
+
+    public School getSchool() {
+        return school;
+    }
 }

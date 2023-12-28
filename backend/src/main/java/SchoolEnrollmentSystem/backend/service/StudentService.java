@@ -1,13 +1,13 @@
 package SchoolEnrollmentSystem.backend.service;
 
-import SchoolEnrollmentSystem.backend.persistence.Parent;
+import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ApplicationRepository;
-import SchoolEnrollmentSystem.backend.repository.ParentRepository;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import SchoolEnrollmentSystem.backend.repository.StudentRepository;
 import SchoolEnrollmentSystem.backend.persistence.Student;
 import SchoolEnrollmentSystem.backend.persistence.Application;
 import SchoolEnrollmentSystem.backend.persistence.School;
+import SchoolEnrollmentSystem.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,9 +21,9 @@ import java.util.Set;
 public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
-    private ParentRepository parentRepository;
     private ApplicationRepository applicationRepository;
     private SchoolRepository schoolRepository;
+    private UserRepository userRepository;
 
     public void addStudent(Student student)
     {
@@ -37,10 +37,10 @@ public class StudentService {
         if (optionalStudent.isPresent()) {
             Student student = optionalStudent.get();
 
-            Parent parent = student.getParent();
+            User parent = student.getParent();
             if (parent != null) {
                 parent.getStudents().remove(student);
-                parentRepository.save(parent);
+                userRepository.save(parent);
             }
 
             Set<Application> applications = student.getApplications();

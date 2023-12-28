@@ -32,9 +32,17 @@ public class School {
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "school" }, allowSetters = true)
     @JoinColumn(unique = true)
-    private Principal principal;
+    private User principal;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "school")
     @JsonIgnoreProperties(value = { "student", "school" }, allowSetters = true)
     private Set<Application> applications = new HashSet<>();
+
+    public List<Class> getClasses() {
+        return classes;
+    }
+
+    public Set<Application> getApplications() {
+        return applications;
+    }
 }

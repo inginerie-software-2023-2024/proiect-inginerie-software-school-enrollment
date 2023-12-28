@@ -19,6 +19,7 @@ public class SchoolController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<School> getAllSchools() {
+
         return schoolService.getAllSchools();
     }
 

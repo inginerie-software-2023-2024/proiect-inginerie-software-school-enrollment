@@ -17,7 +17,11 @@ public class Admin {
 
     private String username;
 
-    private String email;
+    private String salt;
 
-    private String password;
+    private String hash;
+
+    public String getUsername() {
+        return username;
+    }
 }
