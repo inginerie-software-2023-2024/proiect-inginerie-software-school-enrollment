@@ -16,13 +16,10 @@ public class Class {
     @SequenceGenerator(name = "sequenceGenerator")
     private Integer id;
 
-    @JsonIgnoreProperties(value = { "teachingClass" }, allowSetters = true)
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(unique = true)
+    @OneToOne()
     private User teacher;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "principal", "applications", "classes" }, allowSetters = true)
+    @ManyToOne()
     private School school;
 
     public School getSchool() {

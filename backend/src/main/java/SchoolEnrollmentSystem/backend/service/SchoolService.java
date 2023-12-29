@@ -34,18 +34,7 @@ public class SchoolService {
     }
 
     public void deleteSchool(Integer id) {
-        Optional<School> optionalSchool = schoolRepository.findById(id);
-        if (optionalSchool.isPresent()) {
-            School school = optionalSchool.get();
 
-            List<Class> classes = school.getClasses();
-            classRepository.deleteAll(classes);
-
-            Set<Application> applications = school.getApplications();
-            applicationRepository.deleteAll(applications);
-
-            schoolRepository.deleteById(id);
-        }
     }
 
     public void addSchool(School school) {

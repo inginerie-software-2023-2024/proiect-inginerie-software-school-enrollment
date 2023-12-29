@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "schools")
 public class School {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -21,28 +23,9 @@ public class School {
 
     private String name;
 
-    private String location;
+    private String description;
 
-    private Integer points;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "school")
-    @JsonIgnoreProperties(value = { "teacher", "school" }, allowSetters = true)
-    private List<Class> classes;
-
-    @OneToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "school" }, allowSetters = true)
-    @JoinColumn(unique = true)
+    @OneToOne()
+    @JsonIgnore
     private User principal;
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "school")
-    @JsonIgnoreProperties(value = { "student", "school" }, allowSetters = true)
-    private Set<Application> applications = new HashSet<>();
-
-    public List<Class> getClasses() {
-        return classes;
-    }
-
-    public Set<Application> getApplications() {
-        return applications;
-    }
 }

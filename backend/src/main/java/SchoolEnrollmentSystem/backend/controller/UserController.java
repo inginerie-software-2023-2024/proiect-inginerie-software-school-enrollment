@@ -2,43 +2,27 @@ package SchoolEnrollmentSystem.backend.controller;
 
 import SchoolEnrollmentSystem.backend.DTOs.LoginDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RegisterDTO;
+import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.persistence.User;
-import SchoolEnrollmentSystem.backend.security.UserDetailsServiceImpl;
+import io.jsonwebtoken.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import SchoolEnrollmentSystem.backend.service.UserService;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-
-import java.io.Console;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("/users")
 public class UserController {
-    @Bean
-    private BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-    @Lazy
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
-    private UserDetailsServiceImpl userDetailsService;
-
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody RegisterDTO registerDTO) {
@@ -54,7 +38,7 @@ public class UserController {
         user.setEmail(registerDTO.getEmail());
         user.setFirstName(registerDTO.getFirstName());
         user.setLastName(registerDTO.getLastName());
-        user.set_parent(true);
+        user.setParent(true);
 
         String salt = BCrypt.gensalt();
         String hashedPassword = BCrypt.hashpw(registerDTO.getPassword(), salt);
@@ -80,13 +64,65 @@ public class UserController {
             return ResponseEntity.badRequest().body("Incorrect password");
         }
 
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getUsername(),
-                        loginDTO.getPassword()
-                )
-        );
+        String token = jwtUtil.createToken(user);
 
-        return new ResponseEntity<>("User logged in successfully", HttpStatus.OK);
+        return new ResponseEntity<>(token, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String token) {
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        userService.deleteUserById(user.getId());
+
+        return new ResponseEntity<>("User account deleted successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/getAllUsers")
+    public ResponseEntity<?> getAllUsers(@RequestHeader("Authorization") String token) {
+        Claims adminClaim = jwtUtil.resolveClaims(token);
+        Boolean isAdmin = adminClaim.get("admin", Boolean.class);
+
+        if (!isAdmin) {
+            return ResponseEntity.badRequest().body("Not an admin");
+        }
+
+        return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
+    }
+
+    @PostMapping("/updateUser")
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @RequestBody RegisterDTO updatedUser) {
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        user.setUsername(updatedUser.getUsername());
+        user.setEmail(updatedUser.getEmail());
+        user.setFirstName(updatedUser.getFirstName());
+        user.setLastName(updatedUser.getLastName());
+
+        User databaseUser = userService.findByUsername(updatedUser.getUsername());
+        if (BCrypt.hashpw(updatedUser.getPassword(), databaseUser.getPasswordSalt()).equals(databaseUser.getPasswordHash())) {
+            user.setPasswordSalt(databaseUser.getPasswordSalt());
+            user.setPasswordHash(databaseUser.getPasswordHash());
+        } else {
+            String salt = BCrypt.gensalt();
+            String hashedPassword = BCrypt.hashpw(updatedUser.getPassword(), salt);
+
+            user.setPasswordHash(hashedPassword);
+            user.setPasswordSalt(salt);
+        }
+
+
+        userService.updateUser(user.getId(), user);
+        return new ResponseEntity<>("User updated.", HttpStatus.OK);
     }
 }

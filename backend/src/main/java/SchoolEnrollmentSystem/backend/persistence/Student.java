@@ -23,20 +23,11 @@ public class Student {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "students" }, allowSetters = true)
     private User parent;
 
     private Integer grade;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "student")
-    @JsonIgnoreProperties(value = { "student", "school" }, allowSetters = true)
-    private Set<Application> applications = new HashSet<>();
-
     public User getParent() {
         return parent;
-    }
-
-    public Set<Application> getApplications() {
-        return applications;
     }
 }

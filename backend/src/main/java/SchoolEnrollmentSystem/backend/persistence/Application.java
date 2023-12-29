@@ -17,11 +17,9 @@ public class Application {
     private Integer id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "parents", "applications" }, allowSetters = true)
     private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "principal", "applications", "classes" }, allowSetters = true)
     private School school;
 
     public School getSchool() {
