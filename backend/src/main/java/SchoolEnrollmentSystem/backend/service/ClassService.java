@@ -27,26 +27,7 @@ public class ClassService {
 
     private void deleteClass(Integer id)
     {
-//        Optional<Class> optionalClass = classRepository.findById(id);
-//
-//        if (optionalClass.isPresent()) {
-//            Class aClass = optionalClass.get();
-//
-//            School school = aClass.getSchool();
-//
-//            User teacher = aClass.getTeacher();
-//            if (teacher != null) {
-//                teacher.setTeachingClass(null);
-//                userRepository.save(teacher);
-//            }
-//
-//            if (school != null) {
-//                school.getClasses().remove(aClass);
-//                schoolRepository.save(school);
-//            }
-//
-//            classRepository.deleteById(id);
-//        }
+
     }
 
     public Optional<Class> findById(Integer id) {

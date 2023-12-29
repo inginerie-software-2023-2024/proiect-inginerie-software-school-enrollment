@@ -32,28 +32,6 @@ public class StudentService {
 
     public void deleteStudent(Integer id)
     {
-//        Optional<Student> optionalStudent = studentRepository.findById(id);
-//
-//        if (optionalStudent.isPresent()) {
-//            Student student = optionalStudent.get();
-//
-//            User parent = student.getParent();
-//            if (parent != null) {
-//                parent.getStudents().remove(student);
-//                userRepository.save(parent);
-//            }
-//
-//            Set<Application> applications = student.getApplications();
-//            for (Application application : applications) {
-//                School school = application.getSchool();
-//                if (school != null) {
-//                    school.getApplications().remove(application);
-//                    schoolRepository.save(school);
-//                }
-//                applicationRepository.delete(application);
-//            }
-//            studentRepository.deleteById(id);
-//        }
     }
 
     public Student update(Student student) {
