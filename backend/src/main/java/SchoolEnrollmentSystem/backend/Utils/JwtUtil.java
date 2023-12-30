@@ -28,6 +28,7 @@ public class JwtUtil {
 
     public String createToken(User user) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("parent",user.isParent());
         claims.put("principal",user.isDirector());
         claims.put("teacher",user.isTeacher());
         Admin admin = adminService.findByUsername(user.getUsername());

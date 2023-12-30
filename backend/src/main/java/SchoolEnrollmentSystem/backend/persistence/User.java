@@ -51,4 +51,7 @@ public class User {
     @Column(name = "is_teacher")
     private boolean teacher;
 
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Student> students = new HashSet<>();
 }

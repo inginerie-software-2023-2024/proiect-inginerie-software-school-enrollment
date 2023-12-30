@@ -27,14 +27,8 @@ public class SchoolService {
         return schoolRepository.findAll();
     }
 
-    public School getSchoolById(Integer id) {
-        Optional<School> optionalSchool = schoolRepository.findById(id);
-
-        return optionalSchool.orElseThrow(NotFoundException::new);
-    }
-
     public void deleteSchool(Integer id) {
-
+        schoolRepository.deleteById(id);
     }
 
     public void addSchool(School school) {
@@ -49,7 +43,7 @@ public class SchoolService {
         return schoolRepository.findAll();
     }
 
-    public Optional<School> findById(Integer id) {
+    public Optional<School> getSchoolById(Integer id) {
         return schoolRepository.findById(id);
     }
 }

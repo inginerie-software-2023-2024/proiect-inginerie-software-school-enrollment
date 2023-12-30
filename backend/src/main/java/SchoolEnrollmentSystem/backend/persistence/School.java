@@ -21,11 +21,19 @@ public class School {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private String name;
 
     private String description;
 
+    @Column(name="principal_id", nullable = false, insertable = false, updatable = false)
+    private Integer principalId;
+
     @OneToOne()
     @JsonIgnore
     private User principal;
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Request> requests = new HashSet<>();
 }

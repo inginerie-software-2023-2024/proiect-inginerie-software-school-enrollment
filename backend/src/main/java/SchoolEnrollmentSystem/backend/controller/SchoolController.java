@@ -5,9 +5,11 @@ import SchoolEnrollmentSystem.backend.service.SchoolService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @AllArgsConstructor
@@ -19,14 +21,17 @@ public class SchoolController {
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
     public List<School> getAllSchools() {
-
         return schoolService.getAllSchools();
     }
 
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public School getAllSchools(@PathVariable Integer id) {
-        return schoolService.getSchoolById(id);
+    public ResponseEntity<?> getSchoolWithId(@PathVariable Integer id) {
+        Optional<School> schoolOptional = schoolService.getSchoolById(id);
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(schoolOptional.get());
     }
 
     @DeleteMapping(path = "/{id}")

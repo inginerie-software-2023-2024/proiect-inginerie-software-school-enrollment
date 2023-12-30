@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -30,4 +31,8 @@ public class Student {
     public User getParent() {
         return parent;
     }
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Request> requests = new HashSet<>();
 }
