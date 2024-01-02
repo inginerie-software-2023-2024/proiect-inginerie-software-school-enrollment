@@ -15,25 +15,24 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "schools")
-public class School {
+@Table(name = "students")
+public class Student {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "sequenceGenerator")
+    @SequenceGenerator(name = "sequenceGenerator")
+    @Column(name = "id")
     private Integer id;
 
-    @Column(nullable = false)
-    private String name;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private User parent;
 
-    private String description;
+    private Integer grade;
 
-    @Column(name="principal_id", nullable = false, insertable = false, updatable = false)
-    private Integer principalId;
+    public User getParent() {
+        return parent;
+    }
 
-    @OneToOne()
-    @JsonIgnore
-    private User principal;
-
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
 }
