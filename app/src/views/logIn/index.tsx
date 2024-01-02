@@ -47,16 +47,9 @@ export const LogIn = () => {
       })
       .then((token) => {
         const tokenPayload = decodeJWTToken(token)
+        console.log("tokenPayload: ", tokenPayload)
         localStorage.setItem("token", token)
         localStorage.setItem("username", tokenPayload.sub)
-        localStorage.setItem(
-          "role",
-          JSON.stringify({
-            isAdmin: tokenPayload.isAdmin,
-            isTeacher: tokenPayload.isTeacher,
-            isParent: tokenPayload.isStudent,
-          }),
-        )
         navigate("/")
       })
       .catch((error) => {

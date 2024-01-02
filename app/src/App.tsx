@@ -7,6 +7,7 @@ import { Schools } from "./views/schools"
 import React from "react"
 import LogOut from "./views/logOut/LogOut"
 import Profile from "./views/profile/Profile"
+import NotFoundPage from "./views/errors/NotFoundPage"
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
           <Route path={"/log-in"} element={<LogIn />} />
           <Route path={"/log-out"} element={<LogOut />} />
           <Route path={"/profile"} element={<Profile />} />
+          <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>
     </div>
