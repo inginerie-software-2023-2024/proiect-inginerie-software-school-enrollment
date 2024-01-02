@@ -43,7 +43,7 @@ export const LogIn = () => {
     fetch("http://localhost:8080/users/login", requestOptions)
       .then((response) => {
         if (response.status === 200) return response.text()
-        return Promise.reject(response.status)
+        return response.text().then((errorText) => Promise.reject(errorText))
       })
       .then((token) => {
         const tokenPayload = decodeJWTToken(token)
@@ -59,7 +59,10 @@ export const LogIn = () => {
         )
         navigate("/")
       })
-      .catch((error) => console.error(error))
+      .catch((error) => {
+        if (error.message) alert(error.message)
+        else console.error(error)
+      })
   }
 
   // const [data, setData] = useState({})
@@ -72,14 +75,14 @@ export const LogIn = () => {
       label: "Username",
       type: "text",
       required: true,
-      autoFocus: false,
+      autoFocus: true,
       id: "username",
       fullWidth: true,
     },
     {
       autoComplete: "new-password",
       name: "password",
-      label: "Password",
+      label: "Parola",
       type: "password",
       required: true,
       autoFocus: false,
