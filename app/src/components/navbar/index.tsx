@@ -14,7 +14,7 @@ export const NavBar = () => {
       path: "/scoli",
     },
   ]
-  const guestPagesRight = [
+  const guestPagesRightNotLoggedIn = [
     {
       name: "Sign Up",
       path: "/sign-up",
@@ -22,6 +22,17 @@ export const NavBar = () => {
     {
       name: "Log In",
       path: "/log-in",
+    },
+  ]
+
+  const guestPagesRightLoggedIn = [
+    {
+      name: "username",
+      path: "/profile"
+    },
+    {
+      name: "Log Out",
+      path: "/log-out",
     },
   ]
 
@@ -63,17 +74,33 @@ export const NavBar = () => {
             })}
           </div>
           <div className="nav navbar-nav navbar-right">
-            {guestPagesRight.map((page, index) => {
-              return (
-                <button
-                  key={index}
-                  className="navbar-button"
-                  onClick={() => handleClick(page.path)}
-                >
-                  {page.name}
-                </button>
-              )
-            })}
+            {localStorage.getItem("token") ? (
+              guestPagesRightLoggedIn.map((page, index) => {
+                if (localStorage.getItem("token") !== null)
+                  return (
+                    <button
+                      key={index}
+                      className="navbar-button"
+                      onClick={() => handleClick(page.path)}
+                    >
+                      {page.name === "username"? localStorage.getItem("username") : page.name}
+                    </button>
+                  )
+              })
+            ) : (
+              guestPagesRightNotLoggedIn.map((page, index) => {
+                if (localStorage.getItem("token") === null)
+                  return (
+                    <button
+                      key={index}
+                      className="navbar-button"
+                      onClick={() => handleClick(page.path)}
+                    >
+                      {page.name}
+                    </button>
+                  )
+              })
+            )}
           </div>
         </div>
       </div>

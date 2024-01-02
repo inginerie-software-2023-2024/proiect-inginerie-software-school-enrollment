@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
@@ -13,6 +13,7 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { useNavigate } from "react-router-dom"
 
 const defaultTheme = createTheme()
 
@@ -27,6 +28,7 @@ export const SignUp = () => {
   }
 
   const [data, setData] = useState({})
+  const navigate = useNavigate()
 
   const fields = [
     {
@@ -75,6 +77,12 @@ export const SignUp = () => {
     },
   ]
 
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/")
+    }
+  })
+
   return (
     <ThemeProvider theme={defaultTheme}>
       <Container component="main" maxWidth="xs">
@@ -100,17 +108,13 @@ export const SignUp = () => {
             sx={{ mt: 3 }}
           >
             <Grid container spacing={2}>
-              {
-                fields.map((field) => {
-                  return (
-                    <Grid item xs={12} sm={field.sm}>
-                      <TextField
-                        {...field}
-                      />
-                    </Grid>
-                  )
-                })
-              }
+              {fields.map((field, index) => {
+                return (
+                  <Grid key={index} item xs={12} sm={field.sm}>
+                    <TextField {...field} />
+                  </Grid>
+                )
+              })}
             </Grid>
             <Button
               type="submit"

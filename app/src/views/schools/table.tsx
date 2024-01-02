@@ -261,7 +261,7 @@ export const SchoolsTable = () => {
   }
 
   return (
-    <TableContainer component={Paper} style={{padding: "50px"}}>
+    <TableContainer component={Paper} style={{ padding: "50px" }}>
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <StyledTableRow>
