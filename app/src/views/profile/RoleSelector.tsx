@@ -54,7 +54,7 @@ export default function RoleSelector({
       })
       .then((token: string) => {
         localStorage.setItem("token", token)
-        console.log(token)
+        window.location.reload()
       })
       .catch((error) => {
         if (error.message) alert(error.message)

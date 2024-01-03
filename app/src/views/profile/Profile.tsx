@@ -2,6 +2,7 @@ import React, { useState } from "react"
 import RoleSelector from "./RoleSelector"
 import { getCurrentUserRole } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
+import { Card } from "@mui/material"
 
 export default function Profile() {
   const currentRole = getCurrentUserRole()
@@ -17,9 +18,18 @@ export default function Profile() {
 
   return (
     <>
-      <div>
+      <Card
+        style={{
+          display: "grid",
+          placeItems: "center",
+          padding: "1rem",
+          fontSize: "1.5rem",
+          fontWeight: "bold",
+          
+        }}
+      >
         {localStorage.getItem("username")}, you are a {userRole}
-      </div>
+      </Card>
       <RoleSelector currentRole={userRole} roleUpdater={updateRole} />
     </>
   )

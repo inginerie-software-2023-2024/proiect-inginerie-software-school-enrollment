@@ -2,37 +2,65 @@ import "bootstrap/dist/css/bootstrap.min.css"
 import React from "react"
 import { useNavigate } from "react-router-dom"
 import "../../style.css"
+import { getCurrentUserRole } from "../../tokenUtils"
 
 export const NavBar = () => {
   const guestPagesLeft = [
     {
       name: "Home",
       path: "/acasa",
+      access: true,
     },
     {
       name: "Scoli",
       path: "/scoli",
+      access: true,
+    },
+    {
+      name: "Admin",
+      path: "/admin",
+      access:
+        localStorage.getItem("token") !== null &&
+        getCurrentUserRole() === "admin",
+    },
+    {
+      name: "Scoala mea",
+      path: "/scoala-mea",
+      access:
+        localStorage.getItem("token") !== null &&
+        getCurrentUserRole() === "principal",
+    },
+    {
+      name: "Clasa mea",
+      path: "/clasa-mea",
+      access:
+        localStorage.getItem("token") !== null &&
+        getCurrentUserRole() === "teacher",
     },
   ]
   const guestPagesRightNotLoggedIn = [
     {
       name: "Sign Up",
       path: "/sign-up",
+      access: true,
     },
     {
       name: "Log In",
       path: "/log-in",
+      access: true,
     },
   ]
 
   const guestPagesRightLoggedIn = [
     {
       name: "username",
-      path: "/profile"
+      path: "/profile",
+      access: true,
     },
     {
       name: "Log Out",
       path: "/log-out",
+      access: true,
     },
   ]
 
@@ -62,7 +90,7 @@ export const NavBar = () => {
         <div className="collapse navbar-collapse" id="navbarText">
           <div className="navbar-nav me-auto mb-2 mb-lg-0">
             {guestPagesLeft.map((page, index) => {
-              return (
+              return page.access ? (
                 <button
                   key={index}
                   className="navbar-button"
@@ -70,37 +98,37 @@ export const NavBar = () => {
                 >
                   {page.name}
                 </button>
-              )
+              ) : null
             })}
           </div>
           <div className="nav navbar-nav navbar-right">
-            {localStorage.getItem("token") ? (
-              guestPagesRightLoggedIn.map((page, index) => {
-                if (localStorage.getItem("token") !== null)
-                  return (
-                    <button
-                      key={index}
-                      className="navbar-button"
-                      onClick={() => handleClick(page.path)}
-                    >
-                      {page.name === "username"? localStorage.getItem("username") : page.name}
-                    </button>
-                  )
-              })
-            ) : (
-              guestPagesRightNotLoggedIn.map((page, index) => {
-                if (localStorage.getItem("token") === null)
-                  return (
-                    <button
-                      key={index}
-                      className="navbar-button"
-                      onClick={() => handleClick(page.path)}
-                    >
-                      {page.name}
-                    </button>
-                  )
-              })
-            )}
+            {localStorage.getItem("token")
+              ? guestPagesRightLoggedIn.map((page, index) => {
+                  if (localStorage.getItem("token") !== null)
+                    return page.access ? (
+                      <button
+                        key={index}
+                        className="navbar-button"
+                        onClick={() => handleClick(page.path)}
+                      >
+                        {page.name === "username"
+                          ? localStorage.getItem("username")
+                          : page.name}
+                      </button>
+                    ) : null
+                })
+              : guestPagesRightNotLoggedIn.map((page, index) => {
+                  if (localStorage.getItem("token") === null)
+                    return page.access ? (
+                      <button
+                        key={index}
+                        className="navbar-button"
+                        onClick={() => handleClick(page.path)}
+                      >
+                        {page.name}
+                      </button>
+                    ) : null
+                })}
           </div>
         </div>
       </div>
