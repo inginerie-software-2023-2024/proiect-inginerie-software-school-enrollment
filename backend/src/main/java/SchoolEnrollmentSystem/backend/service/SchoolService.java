@@ -3,8 +3,6 @@ package SchoolEnrollmentSystem.backend.service;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Class;
-import SchoolEnrollmentSystem.backend.persistence.Application;
-import SchoolEnrollmentSystem.backend.repository.ApplicationRepository;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
@@ -21,7 +19,6 @@ public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
     private ClassRepository classRepository;
-    private ApplicationRepository applicationRepository;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();
