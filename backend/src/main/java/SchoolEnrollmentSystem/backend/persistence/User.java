@@ -1,7 +1,7 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import SchoolEnrollmentSystem.backend.persistence.Class;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -54,4 +54,17 @@ public class User {
     @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
+
+    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Class schoolClass;
+
+    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private School school;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "school_id", referencedColumnName = "id")
+    @JsonIgnore
+    private School schoolTeacher;
 }

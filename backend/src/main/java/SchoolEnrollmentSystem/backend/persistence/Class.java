@@ -1,10 +1,12 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Data
@@ -16,17 +18,17 @@ public class Class {
     @SequenceGenerator(name = "sequenceGenerator")
     private Integer id;
 
-    @OneToOne()
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     private User teacher;
 
-    @ManyToOne()
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "school_id", referencedColumnName = "id")
     private School school;
 
-    public School getSchool() {
-        return school;
-    }
-
-    public User getTeacher() {
-        return teacher;
-    }
+    @OneToMany(mappedBy = "schoolClass", cascade = CascadeType.ALL)
+    private Set<Student> students = new HashSet<>();
 }

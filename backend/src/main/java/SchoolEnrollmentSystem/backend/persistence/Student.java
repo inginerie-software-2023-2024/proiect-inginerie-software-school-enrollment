@@ -41,4 +41,8 @@ public class Student {
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
+
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "class_id", referencedColumnName = "id")
+    private Class schoolClass;
 }
