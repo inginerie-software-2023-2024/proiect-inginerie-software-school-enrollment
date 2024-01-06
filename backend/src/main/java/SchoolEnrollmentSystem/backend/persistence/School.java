@@ -36,4 +36,6 @@ public class School {
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
+
+
 }
