@@ -18,6 +18,7 @@ import java.util.Set;
 public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
+    @Autowired
     private ClassRepository classRepository;
 
     public List<School> getAllSchools() {
@@ -42,5 +43,13 @@ public class SchoolService {
 
     public Optional<School> getSchoolById(Integer id) {
         return schoolRepository.findById(id);
+    }
+
+    public Optional<School> getSchoolByPrincipalUsername(String username) {
+        return schoolRepository.findAll().stream().filter(school -> school.getPrincipal().getUsername().equals(username)).findFirst();
+    }
+
+    public void addClass(Class c) {
+        classRepository.save(c);
     }
 }

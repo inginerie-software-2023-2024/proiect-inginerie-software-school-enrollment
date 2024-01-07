@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -20,7 +21,7 @@ public class ClassService {
     private SchoolRepository schoolRepository;
     private UserRepository userRepository;
 
-    private void addClass(Class c)
+    public void addClass(Class c)
     {
         classRepository.save(c);
     }
@@ -33,4 +34,13 @@ public class ClassService {
     public Optional<Class> findById(Integer id) {
         return classRepository.findById(id);
     }
+
+    public List<Class> getClassesBySchoolId(Integer schoolId) {
+        return classRepository.findBySchoolId(schoolId);
+    }
+
+    public Optional<Class> getClassesByTeacherId(Integer teacherId) {
+        return classRepository.findTopByTeacherId(teacherId);
+    }
 }
+
