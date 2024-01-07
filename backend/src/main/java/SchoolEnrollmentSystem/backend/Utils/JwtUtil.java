@@ -26,14 +26,31 @@ public class JwtUtil {
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
 
-    public String createToken(User user) {
+    private Claims generateClaims(User user, String currentRole) {
         Claims claims = Jwts.claims().setSubject(user.getUsername());
         claims.put("parent",user.isParent());
         claims.put("principal",user.isDirector());
         claims.put("teacher",user.isTeacher());
+        claims.put("currentRole", currentRole);
         Admin admin = adminService.findByUsername(user.getUsername());
 
         claims.put("admin", admin != null);
+        return claims;
+    }
+
+    public String createToken(User user) {
+        Claims claims = generateClaims(user, "parent");
+        Date tokenCreateTime = new Date();
+        Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
+        return Jwts.builder()
+                .setClaims(claims)
+                .setExpiration(tokenValidity)
+                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .compact();
+    }
+
+    public String createToken(User user, String currentRole) {
+        Claims claims = generateClaims(user, currentRole);
         Date tokenCreateTime = new Date();
         Date tokenValidity = new Date(tokenCreateTime.getTime() + TimeUnit.MINUTES.toMillis(accessTokenValidity));
         return Jwts.builder()

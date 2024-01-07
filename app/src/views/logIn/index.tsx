@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
@@ -13,6 +13,8 @@ import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
 import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
+import { useNavigate } from "react-router-dom"
+import { decodeJWTToken } from "../../tokenUtils"
 
 const defaultTheme = createTheme()
 
@@ -20,29 +22,60 @@ export const LogIn = () => {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
-    console.log({
-      email: data.get("email"),
+    const dataToSend = {
+      username: data.get("username"),
       password: data.get("password"),
-    })
+    }
+
+    if (!dataToSend.username || !dataToSend.password) return
+
+    const requestOptions = {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        username: data.get("username"),
+        password: data.get("password"),
+      }),
+    }
+
+    fetch("http://localhost:8080/users/login", requestOptions)
+      .then((response) => {
+        if (response.status === 200) return response.text()
+        return response.text().then((errorText) => Promise.reject(errorText))
+      })
+      .then((token) => {
+        const tokenPayload = decodeJWTToken(token)
+        console.log("tokenPayload: ", tokenPayload)
+        localStorage.setItem("token", token)
+        localStorage.setItem("username", tokenPayload.sub)
+        navigate("/")
+      })
+      .catch((error) => {
+        if (error.message) alert(error.message)
+        else console.error(error)
+      })
   }
 
-  const [data, setData] = useState({})
+  // const [data, setData] = useState({})
+  const navigate = useNavigate()
 
   const fields = [
     {
-      autoComplete: "email",
-      name: "email",
-      label: "Email Address",
-      type: "email",
+      autoComplete: "username",
+      name: "username",
+      label: "Username",
+      type: "text",
       required: true,
-      autoFocus: false,
-      id: "email",
+      autoFocus: true,
+      id: "username",
       fullWidth: true,
     },
     {
       autoComplete: "new-password",
       name: "password",
-      label: "Password",
+      label: "Parola",
       type: "password",
       required: true,
       autoFocus: false,
@@ -50,6 +83,12 @@ export const LogIn = () => {
       fullWidth: true,
     },
   ]
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      navigate("/")
+    }
+  })
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -76,7 +115,7 @@ export const LogIn = () => {
             sx={{ mt: 1 }}
           >
             {fields.map((field) => {
-              return <TextField margin="normal" {...field} />
+              return <TextField key={field.name} margin="normal" {...field} />
             })}
             <Button
               type="submit"

@@ -4,6 +4,7 @@ import SchoolEnrollmentSystem.backend.DTOs.LoginDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RegisterDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.persistence.User;
+import SchoolEnrollmentSystem.backend.service.AdminService;
 import io.jsonwebtoken.*;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,6 +21,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private AdminService adminService;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -124,5 +128,29 @@ public class UserController {
 
         userService.updateUser(user.getId(), user);
         return new ResponseEntity<>("User updated.", HttpStatus.OK);
+    }
+
+    @PostMapping("/changeRole/{role}")
+    public ResponseEntity<?> changeRole(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String role
+    ) {
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        if(role.equals("admin") && adminService.findByUsername(username) == null)
+            return new ResponseEntity<>("User is not an admin", HttpStatus.FORBIDDEN);
+        else if (role.equals("teacher") && !user.isTeacher())
+            return new ResponseEntity<>("User is not a teacher", HttpStatus.FORBIDDEN);
+        else if(role.equals("principal") && !user.isDirector())
+            return new ResponseEntity<>("User is not a principal", HttpStatus.FORBIDDEN);
+
+        String newToken = jwtUtil.createToken(user, role);
+
+        return new ResponseEntity<>(newToken, HttpStatus.OK);
     }
 }
