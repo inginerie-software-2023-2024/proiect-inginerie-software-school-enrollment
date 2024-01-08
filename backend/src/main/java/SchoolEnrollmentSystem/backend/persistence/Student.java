@@ -26,13 +26,23 @@ public class Student {
     @ManyToOne(fetch = FetchType.LAZY)
     private User parent;
 
-    private Integer grade;
+    @Column(name = "first_name", nullable = false)
+    private String firstName;
 
-    public User getParent() {
-        return parent;
-    }
+    @Column(name = "last_name", nullable = false)
+    private String lastName;
+
+    @Column(name="cnp", unique = true, nullable = false)
+    private String cnp;
+
+    @Column(name="age", nullable = false)
+    private Integer age;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
+
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "class_id", referencedColumnName = "id")
+    private Class schoolClass;
 }

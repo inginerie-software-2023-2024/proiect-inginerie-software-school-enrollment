@@ -29,13 +29,19 @@ public class School {
     @Column(name="principal_id", nullable = false, insertable = false, updatable = false)
     private Integer principalId;
 
-    @OneToOne()
-    @JsonIgnore
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "principal_id", referencedColumnName = "id")
     private User principal;
 
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
 
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Class> classes = new HashSet<>();
 
+    @OneToMany(mappedBy = "schoolTeacher", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<User> teachers = new HashSet<>();
 }
