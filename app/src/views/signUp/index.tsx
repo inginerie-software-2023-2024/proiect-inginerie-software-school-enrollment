@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useContext } from "react"
+import { ReactReduxContext } from "react-redux"
 
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
@@ -18,13 +19,17 @@ import { useNavigate } from "react-router-dom"
 const defaultTheme = createTheme()
 
 export const SignUp = () => {
-  const validateUserInput = (input: FormData) => {
-    const username = input.get("username")?.toString()
-    const firstName = input.get("firstName")?.toString()
-    const lastName = input.get("lastName")?.toString()
-    const email = input.get("email")?.toString()
-    const password = input.get("password")?.toString()
-    const confirmPassword = input.get("confirm-password")?.toString()
+  const { store } = useContext(ReactReduxContext)
+  const validateUserInput = (input: any) => {
+    // const username = input.get("username")?.toString()
+    // const firstName = input.get("firstName")?.toString()
+    // const lastName = input.get("lastName")?.toString()
+    // const email = input.get("email")?.toString()
+    // const password = input.get("password")?.toString()
+    // const confirmPassword = input.get("confirm-password")?.toString()
+
+    const { username, firstName, lastName, email, password, confirmPassword } =
+      input
 
     if (
       !username ||
@@ -85,10 +90,8 @@ export const SignUp = () => {
     }
   }
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault()
-    const data = new FormData(event.currentTarget)
-    const dataToSend = validateUserInput(data)
+  const handleSubmit = () => {
+    const dataToSend = validateUserInput(user)
     if (dataToSend === null) return
 
     const requestOptions = {
@@ -109,9 +112,11 @@ export const SignUp = () => {
       })
       .then((responseText) => {
         console.log("responseText: ", responseText)
+        console.log("user: ", user)
         navigate("/log-in")
       })
       .catch((error) => {
+        console.log("user in error", user)
         if (error.message) alert(error.message)
         else console.error(error)
       })
@@ -178,12 +183,12 @@ export const SignUp = () => {
     },
     {
       autoComplete: "new-password",
-      name: "confirm-password",
+      name: "confirmPassword",
       label: "Confirma parola",
       type: "password",
       required: true,
       autoFocus: false,
-      id: "confirm-password",
+      id: "confirmPassword",
       fullWidth: true,
       sm: 12,
     },
@@ -194,6 +199,25 @@ export const SignUp = () => {
       navigate("/")
     }
   })
+
+  const [user, setUser] = useState({
+    username: "",
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  })
+
+  console.log("user everytime: ", user)
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target
+    setUser((prevState) => ({
+      ...prevState,
+      [name]: value,
+    }))
+  }
 
   return (
     <ThemeProvider theme={defaultTheme}>
@@ -213,26 +237,21 @@ export const SignUp = () => {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit}
-            sx={{ mt: 3 }}
-          >
+          <Box sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               {fields.map((field, index) => {
                 return (
                   <Grid key={index} item xs={12} sm={field.sm}>
-                    <TextField {...field} />
+                    <TextField {...field} onChange={handleChange} />
                   </Grid>
                 )
               })}
             </Grid>
             <Button
-              type="submit"
               fullWidth
               variant="contained"
               sx={{ mt: 3, mb: 2 }}
+              onClick={handleSubmit}
             >
               Sign Up
             </Button>
