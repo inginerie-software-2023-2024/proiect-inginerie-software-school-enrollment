@@ -44,7 +44,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public void updateUser(Integer id, User user)
+    public void updateUser(User user)
     {
         userRepository.save(user);
     }
@@ -52,5 +52,17 @@ public class UserService {
     public User getUserById(Integer id)
     {
         return userRepository.findById(id).orElse(null);
+    }
+
+    public Boolean principalHasAccessToClass(String principalUsername, Integer classId) {
+        User principal = findByUsername(principalUsername);
+
+        if(principal == null)
+            return false;
+
+        if(principal.getSchool() == null || principal.getSchool().getClasses() == null)
+            return false;
+
+        return principal.getSchool().getClasses().stream().anyMatch(c -> c.getId().equals(classId));
     }
 }

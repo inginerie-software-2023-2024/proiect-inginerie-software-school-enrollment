@@ -1,8 +1,10 @@
 package SchoolEnrollmentSystem.backend.service;
 
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Class;
+import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import lombok.AllArgsConstructor;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 @Service
 @AllArgsConstructor
@@ -20,6 +21,8 @@ public class SchoolService {
     private SchoolRepository schoolRepository;
     @Autowired
     private ClassRepository classRepository;
+    @Autowired
+    private UserService userService;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();
@@ -49,7 +52,25 @@ public class SchoolService {
         return schoolRepository.findAll().stream().filter(school -> school.getPrincipal().getUsername().equals(username)).findFirst();
     }
 
-    public void addClass(Class c) {
+    public void addClass(Class c) throws AlreadyAssignedException {
+        if(classRepository.findByNameAndSchool(c.getName(), c.getSchool().getId()).isPresent())
+            throw new AlreadyAssignedException();
+
         classRepository.save(c);
+    }
+
+    public void addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
+        User teacher = userService.findByUsername(username);
+        if(teacher == null)
+            throw new NotFoundException();
+
+        if(teacher.getSchoolTeacher() != null)
+            throw new AlreadyAssignedException();
+
+        teacher.setSchoolTeacher(school);
+        teacher.setTeacher(true);
+        school.getTeachers().add(teacher);
+        userService.updateUser(teacher);
+        update(school);
     }
 }

@@ -1,21 +1,19 @@
 package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.DTOs.StudentDTO;
-import SchoolEnrollmentSystem.backend.exception.NotFoundException;
-import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
+import SchoolEnrollmentSystem.backend.exception.*;
 import SchoolEnrollmentSystem.backend.persistence.User;
-import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
+import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.repository.StudentRepository;
 import SchoolEnrollmentSystem.backend.persistence.Student;
-import SchoolEnrollmentSystem.backend.persistence.School;
-import SchoolEnrollmentSystem.backend.repository.UserRepository;
+import SchoolEnrollmentSystem.backend.persistence.Class;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
+
 
 @Service
 @AllArgsConstructor
@@ -23,9 +21,7 @@ public class StudentService {
     @Autowired
     private StudentRepository studentRepository;
     @Autowired
-    private SchoolRepository schoolRepository;
-    @Autowired
-    private UserRepository userRepository;
+    private ClassRepository classRepository;
     @Autowired
     private UserService userService;
 
@@ -76,5 +72,70 @@ public class StudentService {
 
     public Optional<Student> findById(Integer id) {
         return studentRepository.findById(id);
+    }
+
+    public void assignStudentToClass(Integer studentId, Integer classId)
+            throws NotFoundException, ResourcesNotCorrelatedException, AlreadyAssignedException {
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        Optional<Class> classOptional = classRepository.findById(classId);
+
+        if(studentOptional.isEmpty() || classOptional.isEmpty())
+            throw new NotFoundException();
+
+        Student student = studentOptional.get();
+        Class myClass = classOptional.get();
+
+        if(student.getSchool() == null || !student.getSchool().getId().equals(myClass.getSchool().getId()))
+            throw new ResourcesNotCorrelatedException();
+
+        if(student.getSchoolClass() != null)
+            throw new AlreadyAssignedException();
+
+        student.setSchoolClass(myClass);
+        myClass.getStudents().add(student);
+        studentRepository.save(student);
+        classRepository.save(myClass);
+    }
+
+    public void removeStudentFromClass(Integer studentId, Integer classId)
+            throws NotFoundException, ResourcesNotCorrelatedException {
+        Optional<Student> studentOptional = studentRepository.findById(studentId);
+        Optional<Class> classOptional = classRepository.findById(classId);
+
+        if(studentOptional.isEmpty() || classOptional.isEmpty())
+            throw new NotFoundException();
+
+        Student student = studentOptional.get();
+        Class myClass = classOptional.get();
+
+        if(!myClass.getStudents().contains(student))
+            throw new ResourcesNotCorrelatedException();
+
+        student.setSchoolClass(null);
+        myClass.getStudents().remove(student);
+        studentRepository.save(student);
+        classRepository.save(myClass);
+    }
+
+    public void changeStudentClass(Integer studentId, Integer classId)
+            throws NotFoundException, ResourcesNotCorrelatedException, NullArgumentException {
+
+        Student student = findById(studentId).orElseThrow(NotFoundException::new);
+
+        if(student.getSchoolClass() == null)
+            throw new NullArgumentException();
+
+        Integer currentStudentClassId = student.getSchoolClass().getId();
+        try {
+            removeStudentFromClass(studentId, currentStudentClassId);
+        }
+        catch(Exception e) {
+            throw e;
+        }
+        finally {
+            assignStudentToClass(studentId, currentStudentClassId);
+        }
+
+        assignStudentToClass(studentId, classId);
     }
 }

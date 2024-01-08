@@ -126,7 +126,7 @@ public class UserController {
         }
 
 
-        userService.updateUser(user.getId(), user);
+        userService.updateUser(user);
         return new ResponseEntity<>("User updated.", HttpStatus.OK);
     }
 
