@@ -2,8 +2,8 @@ package SchoolEnrollmentSystem.backend.controller;
 
 import SchoolEnrollmentSystem.backend.DTOs.StudentDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
-import SchoolEnrollmentSystem.backend.exception.NotFoundException;
-import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
+import SchoolEnrollmentSystem.backend.exception.*;
+import SchoolEnrollmentSystem.backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import SchoolEnrollmentSystem.backend.persistence.Student;
@@ -21,6 +21,8 @@ import java.util.Optional;
 public class StudentController {
     @Autowired
     private StudentService studentService;
+    @Autowired
+    private UserService userService;
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -101,5 +103,95 @@ public class StudentController {
             return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Student updated successfully", HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/assign/{studentId}/toClass/{classId}")
+    public ResponseEntity<?> assignStudentToClass(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer studentId,
+            @PathVariable Integer classId
+    ) {
+        Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
+        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        if((isAdmin == null || !isAdmin) && !userService.principalHasAccessToClass(username, classId))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        try{
+            studentService.assignStudentToClass(studentId, classId);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>("Student or class not found", HttpStatus.NOT_FOUND);
+        }
+        catch (AlreadyAssignedException e) {
+            return new ResponseEntity<>("Student is already assigned to a class", HttpStatus.CONFLICT);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Student assigned successfully", HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/remove/{studentId}/fromClass/{classId}")
+    public ResponseEntity<?> removeStudentFromClass(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer studentId,
+            @PathVariable Integer classId
+    ) {
+        Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
+        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        if((isAdmin == null || !isAdmin) && !userService.principalHasAccessToClass(username, classId))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        try{
+            studentService.removeStudentFromClass(studentId, classId);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>("Student or class not found", HttpStatus.NOT_FOUND);
+        }
+        catch (ResourcesNotCorrelatedException e) {
+            return new ResponseEntity<>("Student is not assigned to a class", HttpStatus.CONFLICT);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Student removed successfully", HttpStatus.OK);
+    }
+
+    @PostMapping(path = "/move/{studentId}/toClass/{classId}")
+    public ResponseEntity<?> moveStudentToClass(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer studentId,
+            @PathVariable Integer classId
+    ) {
+        Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
+        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        if((isAdmin == null || !isAdmin) && !userService.principalHasAccessToClass(username, classId))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        try{
+            studentService.changeStudentClass(studentId, classId);
+        } catch (NotFoundException e) {
+            return new ResponseEntity<>("Student or class not found", HttpStatus.NOT_FOUND);
+        }
+        catch (ResourcesNotCorrelatedException e) {
+            return new ResponseEntity<>("Student is not in the same school as the class", HttpStatus.CONFLICT);
+        }
+        catch (NullArgumentException e) {
+            return new ResponseEntity<>("Student is not assigned to a class", HttpStatus.CONFLICT);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Student moved successfully", HttpStatus.OK);
     }
 }

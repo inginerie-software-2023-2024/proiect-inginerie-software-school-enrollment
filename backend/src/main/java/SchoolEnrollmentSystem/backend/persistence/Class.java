@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Entity
 @Data
+@Table(name = "classes")
 @NoArgsConstructor
 @AllArgsConstructor
 public class Class {
@@ -18,8 +19,11 @@ public class Class {
     @SequenceGenerator(name = "sequenceGenerator")
     private Integer id;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, unique = true)
     private String name;
+
+    @Column(name = "max_number_of_students", nullable = false)
+    private Integer maxNumberOfStudents;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")

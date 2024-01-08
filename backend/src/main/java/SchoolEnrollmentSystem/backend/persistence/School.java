@@ -39,6 +39,10 @@ public class School {
 
     @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
     @JsonIgnore
+    private Set<Student> students = new HashSet<>();
+
+    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @JsonIgnore
     private Set<Class> classes = new HashSet<>();
 
     @OneToMany(mappedBy = "schoolTeacher", cascade = CascadeType.ALL)

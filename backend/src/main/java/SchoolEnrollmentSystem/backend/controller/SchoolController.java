@@ -1,8 +1,10 @@
 package SchoolEnrollmentSystem.backend.controller;
 
 import SchoolEnrollmentSystem.backend.DTOs.AddTeacherToClassDTO;
+import SchoolEnrollmentSystem.backend.DTOs.ClassDTO;
 import SchoolEnrollmentSystem.backend.DTOs.SchoolAddDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -86,7 +88,7 @@ public class SchoolController {
 
     @PostMapping(path = "/addClass")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> addClass(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<?> addClass(@RequestHeader("Authorization") String token, @RequestBody ClassDTO classDTO) {
         Claims principalClaim = jwtUtil.resolveClaims(token);
         Boolean isPrincipal = principalClaim.get("principal", Boolean.class);
 
@@ -105,12 +107,18 @@ public class SchoolController {
         Class c = new Class();
         c.setSchool(school);
         c.setTeacher(null);
+        c.setName(classDTO.getName());
+        c.setMaxNumberOfStudents(classDTO.getMaxNumberOfStudents());
 
         try {
             schoolService.addClass(c);
-
-        } catch (Exception e) {
+        }
+        catch(AlreadyAssignedException e) {
+            return new ResponseEntity<>("Class already assigned!", HttpStatus.CONFLICT);
+        }
+        catch (Exception e) {
             System.out.println(e.getMessage());
+            return ResponseEntity.internalServerError().body("Something went wrong!");
         }
 
         return ResponseEntity.ok("Class added");
@@ -154,8 +162,10 @@ public class SchoolController {
         if (classOptional.isPresent())
             return new ResponseEntity<>("Teacher already has a class assigned!", HttpStatus.BAD_REQUEST);
 
-        cls.setTeacher(teacher);
+        if(cls.getSchool().getId().equals(teacher.getSchoolTeacher().getId()))
+            return new ResponseEntity<>("Teacher is not from the same school as the class!", HttpStatus.BAD_REQUEST);
 
+        cls.setTeacher(teacher);
         classService.addClass(cls);
 
         return ResponseEntity.ok("Teacher added to class");
@@ -211,8 +221,10 @@ public class SchoolController {
             return new ResponseEntity<>("Both teaches has assigned classes, so we swap!", HttpStatus.BAD_REQUEST);
         }
 
-        cls.setTeacher(teacher);
+        if(cls.getSchool().getId().equals(teacher.getSchoolTeacher().getId()))
+            return new ResponseEntity<>("Teacher is not from the same school as the class!", HttpStatus.BAD_REQUEST);
 
+        cls.setTeacher(teacher);
         classService.addClass(cls);
 
         return ResponseEntity.ok("Teacher added to class");
