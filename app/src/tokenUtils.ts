@@ -33,7 +33,7 @@ export function getAllUserRoles() {
   return returnRoles
 }
 
-export function getCurrentUserRole() {
+export function getCurrentUserRole(): string | null {
   const token = localStorage.getItem("token")
   if (!token) return null
   const payloadDecoded = decodeJWTToken(token)

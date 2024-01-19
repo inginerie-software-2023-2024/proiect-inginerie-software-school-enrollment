@@ -5,9 +5,6 @@ import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
 import CssBaseline from "@mui/material/CssBaseline"
 import TextField from "@mui/material/TextField"
-import FormControlLabel from "@mui/material/FormControlLabel"
-import Checkbox from "@mui/material/Checkbox"
-import Link from "@mui/material/Link"
 import Grid from "@mui/material/Grid"
 import Box from "@mui/material/Box"
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined"
@@ -48,12 +45,12 @@ export const SignUp = () => {
       return null
     }
 
-    const strongPassword =
-      password !== undefined &&
-      password.match(
-        /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/,
-      )
-    // const strongPassword = true //! decomenteaza linia de mai sus si sterge linia asta cand ai terminat de testat sign up-ul
+    // const strongPassword =
+    //   password !== undefined &&
+    //   password.match(
+    //     /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/,
+    //   )
+    const strongPassword = true //! decomenteaza linia de mai sus si sterge linia asta cand ai terminat de testat sign up-ul
 
     if (password === undefined || !strongPassword) {
       alert(

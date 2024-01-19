@@ -1,18 +1,22 @@
+:root {
+  --main-background-color: #c3f2cd;
+}
+
 .button-borderless {
-    background-color: transparent;
-    border: none;
-    padding: 0;
-    margin: 0;
-    cursor: pointer;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .navbar-button {
-    background-color: transparent;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    outline: none;
-    -webkit-tap-highlight-color: transparent;
+  background-color: transparent;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 }

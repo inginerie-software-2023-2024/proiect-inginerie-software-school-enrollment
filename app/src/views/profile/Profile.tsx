@@ -3,6 +3,8 @@ import RoleSelector from "./RoleSelector"
 import { getCurrentUserRole } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
 import { Card } from "@mui/material"
+import "./style.css"
+import ChildrenList from "./ChildrenList.1"
 
 export default function Profile() {
   const currentRole = getCurrentUserRole()
@@ -16,21 +18,21 @@ export default function Profile() {
     setUserRole(role)
   }
 
+  const roleMapping: { [key: string]: string } = {
+    admin: "Administrator",
+    teacher: "Profesor",
+    parent: "Parinte",
+    principal: "Director",
+  }
+
   return (
     <>
-      <Card
-        style={{
-          display: "grid",
-          placeItems: "center",
-          padding: "1rem",
-          fontSize: "1.5rem",
-          fontWeight: "bold",
-          
-        }}
-      >
-        {localStorage.getItem("username")}, you are a {userRole}
+      <Card className="role-display">
+        {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
+        {roleMapping[userRole!]}
       </Card>
-      <RoleSelector currentRole={userRole} roleUpdater={updateRole} />
+      <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
+      {userRole === "parent" ? <ChildrenList /> : null}
     </>
   )
 }

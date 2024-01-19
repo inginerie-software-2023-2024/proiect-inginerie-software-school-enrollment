@@ -11,6 +11,7 @@ import Button from "@mui/material/Button"
 import { fetchWithToken, getAllUserRoles } from "../../tokenUtils"
 import { toTitleCase } from "../../utilityFunctions"
 import PropTypes from "prop-types"
+import "../../style.css"
 
 export default function RoleSelector({
   currentRole,
@@ -96,7 +97,10 @@ export default function RoleSelector({
         <Button
           variant="contained"
           onClick={handleSubmit}
-          style={{ backgroundColor: "#c3f2cd", color: "#000000" }}
+          style={{
+            backgroundColor: "var(--main-background-color)",
+            color: "#000000",
+          }}
         >
           Schimba Rol
         </Button>
