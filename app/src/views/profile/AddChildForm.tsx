@@ -2,8 +2,12 @@ import React, { useState } from "react"
 import { Button, Grid, TextField } from "@mui/material"
 import { fetchWithToken } from "../../tokenUtils"
 import PropTypes from "prop-types"
-import { domainName } from "../../generalConstants"
-import { useNavigate } from "react-router-dom"
+import {
+  domainName,
+  romanianCNPRegex,
+  romanianNameRegex,
+} from "../../generalConstants"
+import { toast } from "sonner"
 
 export default function AddChildForm({
   closeModal,
@@ -19,36 +23,32 @@ export default function AddChildForm({
     age: 0,
   })
 
-  const navigate = useNavigate()
-
   const handleFormSubmit = () => {
     if (
       formData.firstName === "" ||
       formData.lastName === "" ||
       formData.cnp === ""
     ) {
-      alert("Toate campurile sunt obligatorii")
+      toast.error("Toate campurile sunt obligatorii")
       return
     }
 
-    const romanianNameRegex = /^([A-ZĂÎÂȘȚ]([a-zA-ZăîâșțĂÎÂȘȚ])*([-. ])*)+$/
     if (!romanianNameRegex.test(formData.firstName)) {
-      alert("Prenumele introdus nu este valid")
+      toast.error("Prenumele introdus nu este valid")
       return
     }
     if (!romanianNameRegex.test(formData.lastName)) {
-      alert("Numele introdus nu este valid")
+      toast.error("Numele introdus nu este valid")
       return
     }
 
-    const romanianCNPRegex = /^[56][0-9]{12}$/
     if (!romanianCNPRegex.test(formData.cnp)) {
-      alert("CNP-ul introdus nu este valid")
+      toast.error("CNP-ul introdus nu este valid")
       return
     }
 
     if (formData.age < 6 && formData.age > 18) {
-      alert("Varsta copilului trebuie sa fie intre 6 si 18 ani")
+      toast.error("Varsta copilului trebuie sa fie intre 6 si 18 ani")
       return
     }
 
@@ -75,14 +75,13 @@ export default function AddChildForm({
         else return Promise.reject(new Error("Eroare la adaugarea copilului"))
       })
       .then(() => {
-        alert("Copilul a fost adaugat cu succes")
+        toast.success("Copilul a fost adaugat cu succes")
         closeModal()
         reRenderParent()
       })
       .catch((error) => {
-        alert(error.message)
+        toast.error(error.message)
       })
-    navigate("/profile")
   }
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

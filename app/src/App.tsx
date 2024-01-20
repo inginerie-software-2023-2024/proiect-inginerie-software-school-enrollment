@@ -9,6 +9,7 @@ import LogOut from "./views/logOut/LogOut"
 import Profile from "./views/profile/Profile"
 import NotFoundPage from "./views/errors/NotFoundPage"
 import AdminDashBoard from "./views/admin/AdminDashboard"
+import { Toaster } from "sonner"
 
 function App() {
   return (
@@ -29,6 +30,7 @@ function App() {
           <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>
+      <Toaster richColors />
     </div>
   )
 }

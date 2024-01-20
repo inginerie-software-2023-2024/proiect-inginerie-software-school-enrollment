@@ -15,6 +15,7 @@ import "./style.css"
 import { fetchWithToken } from "../../tokenUtils"
 import AddChildForm from "./AddChildForm"
 import { domainName } from "../../generalConstants"
+import ChildDetails from "./ChildDetails"
 
 interface ChildData {
   cnp: string
@@ -28,7 +29,12 @@ export default function ChildrenList() {
   const [addChildModalState, setAddChildModalState] = useState(false)
   const openAddChildModal = () => setAddChildModalState(true)
   const closeAddChildModal = () => setAddChildModalState(false)
+  const [childDetailsModal, setChildDetailsModal] = useState(false)
+  const openChildDetailsModal = () => setChildDetailsModal(true)
+  const closeChildDetailsModal = () => setChildDetailsModal(false)
   const [dummyState, setDummyState] = useState(false) // used to force a re-render
+
+  const [selectedChildId, setSelectedChildId] = useState(0)
 
   const forceRerender = () => {
     setDummyState((prev) => !prev)
@@ -100,6 +106,11 @@ export default function ChildrenList() {
                 {childrenData.map((child) => (
                   <TableRow
                     key={child.id}
+                    onClick={() => {
+                      setSelectedChildId(child.id)
+                      openChildDetailsModal()
+                    }}
+                    className="selected-row"
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row">
@@ -119,6 +130,7 @@ export default function ChildrenList() {
           style={{
             backgroundColor: "var(--main-background-color)",
             color: "black",
+            marginTop: "1em",
           }}
           onClick={openAddChildModal}
         >
@@ -147,6 +159,33 @@ export default function ChildrenList() {
             <AddChildForm
               closeModal={closeAddChildModal}
               reRenderParent={forceRerender}
+            />
+          </Box>
+        </Modal>
+        <Modal
+          open={childDetailsModal}
+          onClose={closeChildDetailsModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box
+            sx={{
+              position: "absolute" as "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: "fit-content",
+              bgcolor: "background.paper",
+              border: "2px solid #000",
+              boxShadow: 24,
+              p: 4,
+            }}
+            className="centering-wrapper"
+          >
+            <ChildDetails
+              closeModal={closeChildDetailsModal}
+              reRenderParent={forceRerender}
+              childId={selectedChildId}
             />
           </Box>
         </Modal>

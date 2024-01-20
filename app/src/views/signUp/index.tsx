@@ -12,7 +12,13 @@ import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
-import { domainName } from "../../generalConstants"
+import {
+  domainName,
+  emailRegex,
+  romanianNameRegex,
+  strongPasswordRegex,
+} from "../../generalConstants"
+import { toast } from "sonner"
 
 const defaultTheme = createTheme()
 
@@ -37,45 +43,40 @@ export const SignUp = () => {
       !password ||
       !confirmPassword
     ) {
-      alert("Toate campurile sunt obligatorii")
+      toast.error("Toate campurile sunt obligatorii")
       return null
     }
 
     if (password !== confirmPassword) {
-      alert("Parolele nu coincid")
+      toast.error("Parolele nu coincid")
       return null
     }
 
     // const strongPassword =
     //   password !== undefined &&
-    //   password.match(
-    //     /^(?=.*[A-Z].*[A-Z])(?=.*[!@#$&*])(?=.*[0-9].*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8,}$/,
-    //   )
+    //   strongPasswordRegex.test(password)
     const strongPassword = true //! decomenteaza linia de mai sus si sterge linia asta cand ai terminat de testat sign up-ul
 
     if (password === undefined || !strongPassword) {
-      alert(
+      toast.error(
         "Parola ar trebui sa fie lunga de cel putin 8 caractere si sa contina cel putin doua litere mari," +
           "un caracter special (!@#$&*), doua cifre si trei litere mici",
       )
       return null
     }
 
-    if (
-      email === undefined ||
-      !email.match(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-    ) {
-      alert("Email-ul nu este valid")
+    if (email === undefined || !emailRegex.test(email)) {
+      toast.error("Email-ul nu este valid")
       return null
     }
 
     if (
       firstName === undefined ||
       lastName === undefined ||
-      !firstName.match(/^[A-Za-z -]+$/) ||
-      !lastName.match(/^[A-Za-z -]+$/)
+      !romanianNameRegex.test(firstName) ||
+      !romanianNameRegex.test(lastName)
     ) {
-      alert("Numele sau prenumele nu este valid")
+      toast.error("Numele sau prenumele nu este valid")
       return null
     }
 
@@ -112,10 +113,11 @@ export const SignUp = () => {
         console.log("responseText: ", responseText)
         console.log("user: ", user)
         navigate("/log-in")
+        toast.success("Cont creat cu succes")
       })
       .catch((error) => {
         console.log("user in error", user)
-        if (error.message) alert(error.message)
+        if (error.message) toast.error(error.message)
         else console.error(error)
       })
   }

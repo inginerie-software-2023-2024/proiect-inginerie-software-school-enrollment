@@ -19,3 +19,8 @@
 .top-spaced {
   margin-top: 1rem;
 }
+
+.selected-row:hover {
+  background-color: #ededed;
+  cursor: pointer;
+}

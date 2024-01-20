@@ -13,6 +13,7 @@ import { toTitleCase } from "../../utilityFunctions"
 import PropTypes from "prop-types"
 import "../../style.css"
 import { domainName } from "../../generalConstants"
+import { toast } from "sonner"
 
 export default function RoleSelector({
   currentRole,
@@ -32,7 +33,7 @@ export default function RoleSelector({
 
   const handleSubmit = () => {
     if (selectedRole === currentRole) {
-      alert("Deja aveti acest rol selectat")
+      toast.error("Deja aveti acest rol selectat")
       return
     }
 
@@ -59,7 +60,7 @@ export default function RoleSelector({
         window.location.reload()
       })
       .catch((error) => {
-        if (error.message) alert(error.message)
+        if (error.message) toast.error(error.message)
         else console.error(error)
       })
   }
