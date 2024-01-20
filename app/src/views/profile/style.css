@@ -24,3 +24,10 @@
   background-color: #ededed;
   cursor: pointer;
 }
+
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  grid-gap: 1rem;
+  place-items: center;
+}

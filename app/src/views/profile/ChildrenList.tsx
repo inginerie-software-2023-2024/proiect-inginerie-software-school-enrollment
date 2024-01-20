@@ -14,18 +14,17 @@ import React, { useEffect, useState } from "react"
 import "./style.css"
 import { fetchWithToken } from "../../tokenUtils"
 import AddChildForm from "./AddChildForm"
-import { domainName } from "../../generalConstants"
+import {
+  domainName,
+  romanianCNPRegex,
+  romanianNameRegex,
+} from "../../generalConstants"
 import ChildDetails from "./ChildDetails"
+import PropTypes from "prop-types"
+import { ChildData } from "../../interfaces/ChildData"
+import { toast } from "sonner"
 
-interface ChildData {
-  cnp: string
-  firstName: string
-  lastName: string
-  age: number
-  id: number
-}
-
-export default function ChildrenList() {
+export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
   const [addChildModalState, setAddChildModalState] = useState(false)
   const openAddChildModal = () => setAddChildModalState(true)
   const closeAddChildModal = () => setAddChildModalState(false)
@@ -34,7 +33,15 @@ export default function ChildrenList() {
   const closeChildDetailsModal = () => setChildDetailsModal(false)
   const [dummyState, setDummyState] = useState(false) // used to force a re-render
 
-  const [selectedChildId, setSelectedChildId] = useState(0)
+  const [selectedChildInfo, setSelectedChildInfo] = useState<ChildData>({
+    cnp: "",
+    firstName: "",
+    lastName: "",
+    age: 0,
+    id: 0,
+    school: {},
+    class: {},
+  })
 
   const forceRerender = () => {
     setDummyState((prev) => !prev)
@@ -59,6 +66,8 @@ export default function ChildrenList() {
             lastName: rawChildInfo.lastName,
             age: rawChildInfo.age,
             id: rawChildInfo.id,
+            school: rawChildInfo.school,
+            class: rawChildInfo.class,
           }),
         )
 
@@ -69,6 +78,38 @@ export default function ChildrenList() {
     }
     fetchData()
   }, [dummyState])
+
+  const validateStudentData = (studentData: any) => {
+    if (
+      studentData.firstName === "" ||
+      studentData.lastName === "" ||
+      studentData.cnp === ""
+    ) {
+      toast.error("Toate campurile sunt obligatorii")
+      return false
+    }
+
+    if (!romanianNameRegex.test(studentData.firstName)) {
+      toast.error("Prenumele introdus nu este valid")
+      return false
+    }
+    if (!romanianNameRegex.test(studentData.lastName)) {
+      toast.error("Numele introdus nu este valid")
+      return false
+    }
+
+    if (!romanianCNPRegex.test(studentData.cnp)) {
+      toast.error("CNP-ul introdus nu este valid")
+      return false
+    }
+
+    if (studentData.age < 6 && studentData.age > 18) {
+      toast.error("Varsta copilului trebuie sa fie intre 6 si 18 ani")
+      return false
+    }
+
+    return true
+  }
 
   return (
     <div
@@ -86,7 +127,7 @@ export default function ChildrenList() {
             </h2>
           </>
         ) : (
-          <TableContainer>
+          <TableContainer style={tableStyle}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -107,8 +148,7 @@ export default function ChildrenList() {
                   <TableRow
                     key={child.id}
                     onClick={() => {
-                      setSelectedChildId(child.id)
-                      openChildDetailsModal()
+                      setSelectedChildInfo(child), openChildDetailsModal()
                     }}
                     className="selected-row"
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -159,6 +199,7 @@ export default function ChildrenList() {
             <AddChildForm
               closeModal={closeAddChildModal}
               reRenderParent={forceRerender}
+              validateStudentData={validateStudentData}
             />
           </Box>
         </Modal>
@@ -185,11 +226,16 @@ export default function ChildrenList() {
             <ChildDetails
               closeModal={closeChildDetailsModal}
               reRenderParent={forceRerender}
-              childId={selectedChildId}
+              childInfo={selectedChildInfo}
+              validateStudentData={validateStudentData}
             />
           </Box>
         </Modal>
       </Card>
     </div>
   )
+}
+
+ChildrenList.prototype = {
+  tableStyle: PropTypes.object,
 }

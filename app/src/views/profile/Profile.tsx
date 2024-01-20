@@ -30,12 +30,20 @@ export default function Profile() {
 
   return (
     <>
-      <Card className="role-display">
+      <Card className="role-display" style={{ margin: "1em" }}>
         {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
         {roleMapping[userRole!]}
+        <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
       </Card>
-      <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
-      {userRole === "parent" ? <ChildrenList /> : null}
+
+      {userRole === "parent" ? (
+        <ChildrenList
+          tableStyle={{
+            maxHeight: "300px",
+            overflowY: "scroll",
+          }}
+        />
+      ) : null}
     </>
   )
 }

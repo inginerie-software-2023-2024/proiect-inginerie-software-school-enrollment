@@ -2,19 +2,17 @@ import React, { useState } from "react"
 import { Button, Grid, TextField } from "@mui/material"
 import { fetchWithToken } from "../../tokenUtils"
 import PropTypes from "prop-types"
-import {
-  domainName,
-  romanianCNPRegex,
-  romanianNameRegex,
-} from "../../generalConstants"
+import { domainName } from "../../generalConstants"
 import { toast } from "sonner"
 
 export default function AddChildForm({
   closeModal,
   reRenderParent,
+  validateStudentData,
 }: {
   closeModal: () => void
   reRenderParent: () => void
+  validateStudentData: (studentData: any) => boolean
 }) {
   const [formData, setFormData] = useState({
     lastName: "",
@@ -24,33 +22,7 @@ export default function AddChildForm({
   })
 
   const handleFormSubmit = () => {
-    if (
-      formData.firstName === "" ||
-      formData.lastName === "" ||
-      formData.cnp === ""
-    ) {
-      toast.error("Toate campurile sunt obligatorii")
-      return
-    }
-
-    if (!romanianNameRegex.test(formData.firstName)) {
-      toast.error("Prenumele introdus nu este valid")
-      return
-    }
-    if (!romanianNameRegex.test(formData.lastName)) {
-      toast.error("Numele introdus nu este valid")
-      return
-    }
-
-    if (!romanianCNPRegex.test(formData.cnp)) {
-      toast.error("CNP-ul introdus nu este valid")
-      return
-    }
-
-    if (formData.age < 6 && formData.age > 18) {
-      toast.error("Varsta copilului trebuie sa fie intre 6 si 18 ani")
-      return
-    }
+    if (!validateStudentData(formData)) return
 
     const requestBody = {
       firstName: formData.firstName,
