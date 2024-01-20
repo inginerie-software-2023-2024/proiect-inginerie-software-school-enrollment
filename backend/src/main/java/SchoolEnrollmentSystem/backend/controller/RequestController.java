@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.controller;
 
+import SchoolEnrollmentSystem.backend.DTOs.RequestDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
@@ -129,14 +130,17 @@ public class RequestController {
         return ResponseEntity.ok(requestService.getAllRequestsOfStudent(studentOptional.get()));
     }
 
-    @PostMapping("/add/{studentId}/{schoolId}")
+    @PostMapping("/add")
     public ResponseEntity<?> addRequest(
-            @PathVariable Integer studentId,
-            @PathVariable Integer schoolId,
+            @RequestBody RequestDTO requestDTO,
             @RequestHeader("Authorization") String token
     ) {
         Claims accessClaim = jwtUtil.resolveClaims(token);
         Boolean isParent = accessClaim.get("parent", Boolean.class);
+
+        Integer studentId = requestDTO.getStudentId();
+        Integer schoolId = requestDTO.getSchoolId();
+        Integer grade = requestDTO.getGrade();
 
         if(isParent == null || !isParent)
             return ResponseEntity.badRequest().body("Unauthorized");
@@ -150,7 +154,7 @@ public class RequestController {
             return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
 
         try {
-            requestService.addRequest(studentOptional.get(), schoolOptional.get());
+            requestService.addRequest(studentOptional.get(), schoolOptional.get(), grade);
 
         }
         catch (NullArgumentException e) {

@@ -56,13 +56,14 @@ public class RequestService {
         return school.getRequests().stream().toList();
     }
 
-    public void addRequest(Student student, School school) throws NullArgumentException, UniqueResourceExistent{
+    public void addRequest(Student student, School school, Integer grade) throws NullArgumentException, UniqueResourceExistent{
         if(student == null || school == null)
             throw new NullArgumentException();
 
         Request request = new Request();
         request.setStudent(student);
         request.setSchool(school);
+        request.setGrade(grade);
 
         // if there is already a request from the same student to the same school, don't add it
         long numberExistent = requestRepository.findAll().stream()

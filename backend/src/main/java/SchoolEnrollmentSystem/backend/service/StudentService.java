@@ -52,7 +52,24 @@ public class StudentService {
     }
 
     public void update(StudentDTO studentDTO) throws NotFoundException, UniqueResourceExistent {
-       addStudent(studentDTO);
+        Student studentTemp = studentRepository.findByCnp(studentDTO.getCnp());
+        if(studentRepository.findByCnp(studentDTO.getCnp()) != null && !studentTemp.getId().equals(studentDTO.getId()))
+            throw new UniqueResourceExistent();
+
+        if(studentRepository.findById(studentDTO.getId()).isEmpty())
+            throw new NotFoundException();
+
+        User parent = userService.findByUsername(studentDTO.getParentUsername());
+        if(parent == null)
+            throw new NotFoundException();
+
+        Student student = new Student();
+        student.setAge(studentDTO.getAge());
+        student.setFirstName(studentDTO.getFirstName());
+        student.setLastName(studentDTO.getLastName());
+        student.setCnp(studentDTO.getCnp());
+        student.setParent(parent);
+        studentRepository.save(student);
     }
 
     public List<Student> findAll() {
@@ -117,8 +134,7 @@ public class StudentService {
         classRepository.save(myClass);
     }
 
-    public void changeStudentClass(Integer studentId, Integer classId)
-            throws NotFoundException, ResourcesNotCorrelatedException, NullArgumentException {
+    public void changeStudentClass(Integer studentId, Integer classId) throws Exception {
 
         Student student = findById(studentId).orElseThrow(NotFoundException::new);
 
@@ -128,9 +144,6 @@ public class StudentService {
         Integer currentStudentClassId = student.getSchoolClass().getId();
         try {
             removeStudentFromClass(studentId, currentStudentClassId);
-        }
-        catch(Exception e) {
-            throw e;
         }
         finally {
             assignStudentToClass(studentId, currentStudentClassId);
