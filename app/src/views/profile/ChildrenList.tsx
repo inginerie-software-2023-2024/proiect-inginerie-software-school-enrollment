@@ -14,6 +14,7 @@ import React, { useEffect, useState } from "react"
 import "./style.css"
 import { fetchWithToken } from "../../tokenUtils"
 import AddChildForm from "./AddChildForm"
+import { domainName } from "../../generalConstants"
 
 interface ChildData {
   cnp: string
@@ -27,15 +28,22 @@ export default function ChildrenList() {
   const [addChildModalState, setAddChildModalState] = useState(false)
   const openAddChildModal = () => setAddChildModalState(true)
   const closeAddChildModal = () => setAddChildModalState(false)
+  const [dummyState, setDummyState] = useState(false) // used to force a re-render
+
+  const forceRerender = () => {
+    setDummyState((prev) => !prev)
+  }
 
   const [childrenData, setChildrenData] = useState<Array<ChildData>>([])
+
+  const tableHeaderStyle = {
+    fontWeight: "bold",
+  }
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetchWithToken(
-          "https://localhost:8080/students/ofMyself",
-        )
+        const response = await fetchWithToken(domainName + "/students/ofMyself")
         const rawData = await response.json()
 
         const formattedData: Array<ChildData> = rawData.map(
@@ -54,7 +62,7 @@ export default function ChildrenList() {
       }
     }
     fetchData()
-  }, [])
+  }, [dummyState])
 
   return (
     <div
@@ -76,11 +84,16 @@ export default function ChildrenList() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell>Prenume</TableCell>
-                  <TableCell align="right">Nume</TableCell>
-                  <TableCell align="right">CNP</TableCell>
-                  <TableCell align="right">Age</TableCell>
-                  <TableCell align="right"></TableCell>
+                  <TableCell style={tableHeaderStyle}>Prenume</TableCell>
+                  <TableCell align="right" style={tableHeaderStyle}>
+                    Nume
+                  </TableCell>
+                  <TableCell align="right" style={tableHeaderStyle}>
+                    CNP
+                  </TableCell>
+                  <TableCell align="right" style={tableHeaderStyle}>
+                    Varsta
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -131,7 +144,10 @@ export default function ChildrenList() {
             }}
             className="centering-wrapper"
           >
-            <AddChildForm />
+            <AddChildForm
+              closeModal={closeAddChildModal}
+              reRenderParent={forceRerender}
+            />
           </Box>
         </Modal>
       </Card>

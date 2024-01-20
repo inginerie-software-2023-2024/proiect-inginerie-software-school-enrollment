@@ -1,22 +1,25 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import RoleSelector from "./RoleSelector"
 import { getCurrentUserRole } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
 import { Card } from "@mui/material"
 import "./style.css"
-import ChildrenList from "./ChildrenList.1"
+import ChildrenList from "./ChildrenList"
 
 export default function Profile() {
   const currentRole = getCurrentUserRole()
   const navigate = useNavigate()
-  if (currentRole === null) {
-    navigate("/login")
-  }
   const [userRole, setUserRole] = useState(currentRole)
 
   const updateRole = (role: string) => {
     setUserRole(role)
   }
+
+  useEffect(() => {
+    if (currentRole === null) {
+      navigate("/log-in")
+    }
+  }, [])
 
   const roleMapping: { [key: string]: string } = {
     admin: "Administrator",

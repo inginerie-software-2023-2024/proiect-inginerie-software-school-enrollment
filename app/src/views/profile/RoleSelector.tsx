@@ -12,6 +12,7 @@ import { fetchWithToken, getAllUserRoles } from "../../tokenUtils"
 import { toTitleCase } from "../../utilityFunctions"
 import PropTypes from "prop-types"
 import "../../style.css"
+import { domainName } from "../../generalConstants"
 
 export default function RoleSelector({
   currentRole,
@@ -43,7 +44,7 @@ export default function RoleSelector({
     }
 
     fetchWithToken(
-      `http://localhost:8080/users/changeRole/${selectedRole}`,
+      domainName + `/users/changeRole/${selectedRole}`,
       requestOptions,
     )
       .then((response) => {

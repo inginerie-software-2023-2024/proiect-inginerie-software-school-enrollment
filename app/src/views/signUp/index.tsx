@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography"
 import Container from "@mui/material/Container"
 import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
+import { domainName } from "../../generalConstants"
 
 const defaultTheme = createTheme()
 
@@ -99,7 +100,7 @@ export const SignUp = () => {
       body: JSON.stringify(dataToSend),
     }
 
-    fetch("http://localhost:8080/users/register", requestOptions)
+    fetch(domainName + "/users/register", requestOptions)
       .then((response) => {
         if (response.status === 200) return response.text()
         else

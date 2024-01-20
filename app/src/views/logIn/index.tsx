@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react"
 import { useContext } from "react"
-import { ReactReduxContext } from 'react-redux'
+import { ReactReduxContext } from "react-redux"
 
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom"
 import { decodeJWTToken } from "../../tokenUtils"
 
 import { login } from "../../app/reducers"
+import { domainName } from "../../generalConstants"
 
 const defaultTheme = createTheme()
 
@@ -45,7 +46,7 @@ export const LogIn = () => {
       }),
     }
 
-    fetch("http://localhost:8080/users/login", requestOptions)
+    fetch(domainName + "/users/login", requestOptions)
       .then((response) => {
         console.log("response: ", response)
         if (response.status === 200) return response.text()
@@ -65,9 +66,7 @@ export const LogIn = () => {
       })
   }
 
-  const handleChange = (event: any, name: string) => {
-    
-  }
+  const handleChange = (event: any, name: string) => {}
 
   // const [data, setData] = useState({})
   const navigate = useNavigate()
