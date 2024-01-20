@@ -73,7 +73,7 @@ export const NavBar = () => {
   return (
     <nav
       className="navbar navbar-expand-lg"
-      style={{ backgroundColor: "#c3f2cd" }}
+      style={{ backgroundColor: "var(--main-background-color)" }}
     >
       <div className="container-fluid">
         <button

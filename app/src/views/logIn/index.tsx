@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react"
+import { useContext } from "react"
+import { ReactReduxContext } from "react-redux"
 
 import Avatar from "@mui/material/Avatar"
 import Button from "@mui/material/Button"
@@ -16,15 +18,32 @@ import { createTheme, ThemeProvider } from "@mui/material/styles"
 import { useNavigate } from "react-router-dom"
 import { decodeJWTToken } from "../../tokenUtils"
 
+import { login } from "../../app/reducers"
+import { domainName } from "../../generalConstants"
+import { toast } from "sonner"
+
 const defaultTheme = createTheme()
 
 export const LogIn = () => {
+  const { store } = useContext(ReactReduxContext)
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault()
     const data = new FormData(event.currentTarget)
+    const username = data.get("username")
+    const password = data.get("password")
+    if (
+      username === null ||
+      password === null ||
+      username == "" ||
+      password == ""
+    ) {
+      toast.error("Ambele campuri sunt obligatorii")
+      return
+    }
+
     const dataToSend = {
-      username: data.get("username"),
-      password: data.get("password"),
+      username: username,
+      password: password,
     }
 
     if (!dataToSend.username || !dataToSend.password) return
@@ -40,23 +59,28 @@ export const LogIn = () => {
       }),
     }
 
-    fetch("http://localhost:8080/users/login", requestOptions)
+    fetch(domainName + "/users/login", requestOptions)
       .then((response) => {
+        console.log("response: ", response)
         if (response.status === 200) return response.text()
         return response.text().then((errorText) => Promise.reject(errorText))
       })
       .then((token) => {
         const tokenPayload = decodeJWTToken(token)
         console.log("tokenPayload: ", tokenPayload)
+        store.dispatch(login(tokenPayload.sub))
         localStorage.setItem("token", token)
         localStorage.setItem("username", tokenPayload.sub)
         navigate("/")
+        toast.success("Autentificare cu succes")
       })
       .catch((error) => {
-        if (error.message) alert(error.message)
+        if (error.message) toast.error(error.message)
         else console.error(error)
       })
   }
+
+  const handleChange = (event: any, name: string) => {}
 
   // const [data, setData] = useState({})
   const navigate = useNavigate()
@@ -115,7 +139,14 @@ export const LogIn = () => {
             sx={{ mt: 1 }}
           >
             {fields.map((field) => {
-              return <TextField key={field.name} margin="normal" {...field} />
+              return (
+                <TextField
+                  key={field.name}
+                  margin="normal"
+                  {...field}
+                  onChange={(e) => handleChange(e, field.name)}
+                />
+              )
             })}
             <Button
               type="submit"

@@ -74,11 +74,14 @@ public class StudentController {
     }
 
     @PostMapping(path = "/add")
-    public ResponseEntity<?> addStudent(@RequestBody StudentDTO student) {
+    public ResponseEntity<?> addStudent(
+            @RequestBody StudentDTO student,
+            @RequestHeader("Authorization") String token
+    ) {
+        String parentUsername = jwtUtil.resolveClaims(token).getSubject();
+        student.setParentUsername(parentUsername);
         try{
             studentService.addStudent(student);
-        } catch (NotFoundException e) {
-            return new ResponseEntity<>("Student not found", HttpStatus.NOT_FOUND);
         }
         catch (UniqueResourceExistent e) {
             return new ResponseEntity<>("Student with that CNP already exists", HttpStatus.CONFLICT);
@@ -90,7 +93,12 @@ public class StudentController {
     }
 
     @PutMapping(path = "/update")
-    public ResponseEntity<?> updateStudent(@RequestBody StudentDTO student) {
+    public ResponseEntity<?> updateStudent(
+            @RequestBody StudentDTO student,
+            @RequestHeader("Authorization") String token
+    ) {
+        String parentUsername = jwtUtil.resolveClaims(token).getSubject();
+        student.setParentUsername(parentUsername);
         try{
             studentService.update(student);
         } catch (NotFoundException e) {

@@ -11,6 +11,9 @@ import Button from "@mui/material/Button"
 import { fetchWithToken, getAllUserRoles } from "../../tokenUtils"
 import { toTitleCase } from "../../utilityFunctions"
 import PropTypes from "prop-types"
+import "../../style.css"
+import { domainName } from "../../generalConstants"
+import { toast } from "sonner"
 
 export default function RoleSelector({
   currentRole,
@@ -30,7 +33,7 @@ export default function RoleSelector({
 
   const handleSubmit = () => {
     if (selectedRole === currentRole) {
-      alert("Deja aveti acest rol selectat")
+      toast.error("Deja aveti acest rol selectat")
       return
     }
 
@@ -42,7 +45,7 @@ export default function RoleSelector({
     }
 
     fetchWithToken(
-      `http://localhost:8080/users/changeRole/${selectedRole}`,
+      domainName + `/users/changeRole/${selectedRole}`,
       requestOptions,
     )
       .then((response) => {
@@ -57,7 +60,7 @@ export default function RoleSelector({
         window.location.reload()
       })
       .catch((error) => {
-        if (error.message) alert(error.message)
+        if (error.message) toast.error(error.message)
         else console.error(error)
       })
   }
@@ -96,7 +99,10 @@ export default function RoleSelector({
         <Button
           variant="contained"
           onClick={handleSubmit}
-          style={{ backgroundColor: "#c3f2cd", color: "#000000" }}
+          style={{
+            backgroundColor: "var(--main-background-color)",
+            color: "#000000",
+          }}
         >
           Schimba Rol
         </Button>

@@ -1,0 +1,26 @@
+.role-display {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.centering-wrapper {
+  display: grid;
+  place-items: center;
+}
+
+.padded-fit-wrapper {
+  padding: 1rem;
+  width: fit-content;
+}
+
+.top-spaced {
+  margin-top: 1rem;
+}
+
+.selected-row:hover {
+  background-color: #ededed;
+  cursor: pointer;
+}

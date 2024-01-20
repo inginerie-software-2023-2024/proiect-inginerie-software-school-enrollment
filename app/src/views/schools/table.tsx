@@ -1,4 +1,4 @@
-import React from "react"
+import React, {useContext} from "react"
 
 import { useTheme } from "@mui/material/styles"
 import Box from "@mui/material/Box"
@@ -19,6 +19,11 @@ import LastPageIcon from "@mui/icons-material/LastPage"
 import { styled } from "@mui/material/styles"
 import { tableCellClasses } from "@mui/material/TableCell"
 import TableHead from "@mui/material/TableHead"
+import { Button } from "@mui/material"
+
+import { chooseSchool } from "../../app/reducers/schools"
+import {ReactReduxContext} from 'react-redux'
+
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -242,6 +247,11 @@ export const SchoolsTable = () => {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
+  const [isSchoolClicked, setIsSchoolClicked] = React.useState(false)
+
+  const {store} = useContext(ReactReduxContext)
+  const state = store.getState()
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - schools.length) : 0
@@ -258,6 +268,12 @@ export const SchoolsTable = () => {
   ) => {
     setRowsPerPage(parseInt(event.target.value, 10))
     setPage(0)
+  }
+
+  const handleSchoolClick = (school: any) => {
+    console.log("school: ", school)
+    setIsSchoolClicked(true)
+    store.dispatch(chooseSchool(school))
   }
 
   return (
@@ -282,7 +298,9 @@ export const SchoolsTable = () => {
             return (
               <StyledTableRow key={name}>
                 <TableCell component="th" scope="row">
-                  {name}
+                  <Button onClick={() => handleSchoolClick(name)}>
+                    {name}
+                  </Button>
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
                   {director}
