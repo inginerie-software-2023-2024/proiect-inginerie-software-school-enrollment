@@ -92,7 +92,7 @@ public class StudentController {
         return new ResponseEntity<>("Student added successfully", HttpStatus.CREATED);
     }
 
-    @PutMapping(path = "/update")
+    @PutMapping(path = "/update") //! TODO: la update se adauga un nou student, desi nu ar trebui sa se intample asta
     public ResponseEntity<?> updateStudent(
             @RequestBody StudentDTO student,
             @RequestHeader("Authorization") String token
