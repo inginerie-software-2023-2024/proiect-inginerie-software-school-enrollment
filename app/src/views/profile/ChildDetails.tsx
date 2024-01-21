@@ -29,14 +29,14 @@ export default function ChildDetails({
   validateStudentData: (studentData: any) => boolean
 }) {
   const [editMode, setEditMode] = useState(false)
-  const [childData, setChildData] = useState(childInfo)
+  const [childData, setChildData] = useState({ ...childInfo })
   const [requestsData, setRequestsData] = useState<SchoolRequestData[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await fetchWithToken(
-          domainName + `requests/ofStudent/${childData.id}`,
+          domainName + `/requests/ofStudent/${childData.id}`,
         )
         const rawData = await response.json()
         setRequestsData(rawData)
@@ -100,7 +100,7 @@ export default function ChildDetails({
 
   const fields = [
     {
-      defaultValue: childData.lastName,
+      value: childData.lastName,
       autoComplete: "child-last-name",
       name: "lastName",
       label: "Nume Copil",
@@ -113,7 +113,7 @@ export default function ChildDetails({
       disabled: !editMode,
     },
     {
-      defaultValue: childData.firstName,
+      value: childData.firstName,
       autoComplete: "child-first-name",
       name: "firstName",
       label: "Prenume Copil",
@@ -126,7 +126,7 @@ export default function ChildDetails({
       disabled: !editMode,
     },
     {
-      defaultValue: childData.cnp,
+      value: childData.cnp,
       autoComplete: "child-cnp",
       name: "cnp",
       label: "CNP Copil",
@@ -139,7 +139,7 @@ export default function ChildDetails({
       disabled: !editMode,
     },
     {
-      defaultValue: childData.age,
+      value: childData.age,
       autoComplete: "off",
       name: "age",
       label: "Varsta Copil",
@@ -152,7 +152,7 @@ export default function ChildDetails({
       disabled: !editMode,
     },
     {
-      defaultValue:
+      value:
         childData.school != null ? childData.school.name : "---------------",
       label: "Scoala",
       type: "text",
@@ -164,8 +164,7 @@ export default function ChildDetails({
       id: "child-school-name",
     },
     {
-      defaultValue:
-        childData.class != null ? childData.class.name : "---------------",
+      value: childData.class != null ? childData.class.name : "---------------",
       label: "Clasa",
       type: "text",
       fullWidth: true,
@@ -225,8 +224,6 @@ export default function ChildDetails({
               }}
               onClick={handleSave}
             >
-              {/* //! TODO: la update nu se salveaza informatiile noi, ci se creeaza un nou student in BD*/}
-              {/* //! TODO: TESTEAZA DACA MERGE BINE TABELUL DE REQUEST-URI SI UPDATE DE INFORMATII ALE COPILULUI*/}
               Salveaza
             </Button>
           ) : null}
@@ -238,7 +235,10 @@ export default function ChildDetails({
                 color: "black",
                 marginTop: "1em",
               }}
-              onClick={() => setEditMode(false)}
+              onClick={() => {
+                setChildData({ ...childInfo })
+                setEditMode(false)
+              }}
             >
               Anuleaza
             </Button>
@@ -252,6 +252,7 @@ export default function ChildDetails({
         {requestsData.length > 0 ? (
           childData.school == null ? (
             <TableContainer>
+              {/* //! TODO: TESTEAZA DACA MERGE BINE TABELUL DE REQUEST-URI SI UPDATE DE INFORMATII ALE COPILULUI*/}
               <Table aria-label="simple table">
                 <TableHead>
                   <TableRow>

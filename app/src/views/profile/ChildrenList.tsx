@@ -67,7 +67,7 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
             age: rawChildInfo.age,
             id: rawChildInfo.id,
             school: rawChildInfo.school,
-            class: rawChildInfo.class,
+            class: rawChildInfo.schoolClass,
           }),
         )
 
