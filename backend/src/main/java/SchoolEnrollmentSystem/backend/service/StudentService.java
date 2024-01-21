@@ -69,6 +69,7 @@ public class StudentService {
         student.setLastName(studentDTO.getLastName());
         student.setCnp(studentDTO.getCnp());
         student.setParent(parent);
+        student.setId(studentDTO.getId());
         studentRepository.save(student);
     }
 
