@@ -23,6 +23,7 @@ import ChildDetails from "./ChildDetails"
 import PropTypes from "prop-types"
 import { ChildData } from "../../interfaces/ChildData"
 import { toast } from "sonner"
+import CustomTable from "../../components/table/CustomTable"
 
 export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
   const [addChildModalState, setAddChildModalState] = useState(false)
@@ -71,6 +72,14 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
           }),
         )
 
+        formattedData.sort((a, b) => {
+          if (a.firstName < b.firstName) return -1
+          if (a.firstName > b.firstName) return 1
+          if (a.lastName < b.lastName) return -1
+          if (a.lastName > b.lastName) return 1
+          return 0
+        })
+
         setChildrenData(formattedData)
       } catch (error) {
         console.error("Error fetching data:", error)
@@ -103,13 +112,20 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
       return false
     }
 
-    if (studentData.age < 6 && studentData.age > 18) {
+    if (isNaN(studentData.age)) {
+      toast.error("Varsta copilului trebuie sa fie un numar")
+      return false
+    }
+
+    if (studentData.age < 6 || studentData.age > 18) {
       toast.error("Varsta copilului trebuie sa fie intre 6 si 18 ani")
       return false
     }
 
     return true
   }
+
+  const tableHeaders = ["Prenume", "Nume", "CNP", "Varsta"]
 
   return (
     <div
@@ -127,43 +143,16 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
             </h2>
           </>
         ) : (
-          <TableContainer style={tableStyle}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell style={tableHeaderStyle}>Prenume</TableCell>
-                  <TableCell align="right" style={tableHeaderStyle}>
-                    Nume
-                  </TableCell>
-                  <TableCell align="right" style={tableHeaderStyle}>
-                    CNP
-                  </TableCell>
-                  <TableCell align="right" style={tableHeaderStyle}>
-                    Varsta
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {childrenData.map((child) => (
-                  <TableRow
-                    key={child.id}
-                    onClick={() => {
-                      setSelectedChildInfo(child), openChildDetailsModal()
-                    }}
-                    className="selected-row"
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row">
-                      {child.firstName}
-                    </TableCell>
-                    <TableCell align="right">{child.lastName}</TableCell>
-                    <TableCell align="right">{child.cnp}</TableCell>
-                    <TableCell align="right">{child.age}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
+          <CustomTable
+            tableHeaders={tableHeaders}
+            tableData={childrenData}
+            tableDataOrder={["firstName", "lastName", "cnp", "age"]}
+            tableStyle={tableStyle}
+            tableHeaderStyle={tableHeaderStyle}
+            rowClickFunction={(data) => {
+              setSelectedChildInfo(data), openChildDetailsModal()
+            }}
+          />
         )}
         <Button
           variant="contained"

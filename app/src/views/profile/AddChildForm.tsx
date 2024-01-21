@@ -1,9 +1,10 @@
 import React, { useState } from "react"
-import { Button, Grid, TextField } from "@mui/material"
+import { Button } from "@mui/material"
 import { fetchWithToken } from "../../tokenUtils"
 import PropTypes from "prop-types"
 import { domainName } from "../../generalConstants"
 import { toast } from "sonner"
+import Form from "../../components/form/Form"
 
 export default function AddChildForm({
   closeModal,
@@ -56,14 +57,6 @@ export default function AddChildForm({
       })
   }
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: name === "age" ? parseInt(value) : value,
-    }))
-  }
-
   const fields = [
     {
       autoComplete: "child-last-name",
@@ -114,15 +107,7 @@ export default function AddChildForm({
   return (
     <>
       <h1 style={{ fontWeight: "bold" }}>Adauga Copil</h1>
-      <Grid container spacing={2} style={{ marginTop: "1em" }}>
-        {fields.map((field, index) => {
-          return (
-            <Grid key={index} item xs={12} sm={field.sm}>
-              <TextField {...field} onChange={handleChange} />
-            </Grid>
-          )
-        })}
-      </Grid>
+      <Form fields={fields} setFormData={setFormData} intFields={["age"]} />
       <Button
         variant="contained"
         style={{

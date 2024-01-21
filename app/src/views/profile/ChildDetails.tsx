@@ -16,6 +16,8 @@ import { SchoolRequestData } from "../../interfaces/SchoolRequestData"
 import { domainName } from "../../generalConstants"
 import { fetchWithToken } from "../../tokenUtils"
 import { toast } from "sonner"
+import Form from "../../components/form/Form"
+import CustomTable from "../../components/table/CustomTable"
 
 export default function ChildDetails({
   closeModal,
@@ -46,14 +48,6 @@ export default function ChildDetails({
     }
     fetchData()
   }, [])
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setChildData((prevState) => ({
-      ...prevState,
-      [name]: name === "age" ? parseInt(value) : value,
-    }))
-  }
 
   const handleSave = () => {
     if (!validateStudentData(childData)) return
@@ -185,15 +179,7 @@ export default function ChildDetails({
         <h2 style={{ textAlign: "center", fontWeight: "bold" }}>
           Detalii Copil
         </h2>
-        <Grid container spacing={2} style={{ marginTop: "1em" }}>
-          {fields.map((field, index) => {
-            return (
-              <Grid key={index} item xs={12} sm={field.sm}>
-                <TextField {...field} onChange={handleChange} />
-              </Grid>
-            )
-          })}
-        </Grid>
+        <Form fields={fields} setFormData={setChildData} intFields={["age"]} />
         <div
           style={{
             marginTop: "1em",
@@ -251,41 +237,45 @@ export default function ChildDetails({
         </h2>
         {requestsData.length > 0 ? (
           childData.school == null ? (
-            <TableContainer>
-              {/* //! TODO: TESTEAZA DACA MERGE BINE TABELUL DE REQUEST-URI SI UPDATE DE INFORMATII ALE COPILULUI*/}
-              <Table aria-label="simple table">
-                <TableHead>
-                  <TableRow>
-                    <TableCell style={{ fontWeight: "bold" }}>Scoala</TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="right">
-                      Clasa
-                    </TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="right">
-                      Status
-                    </TableCell>
-                    <TableCell style={{ fontWeight: "bold" }} align="right">
-                      Actiune
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {requestsData.map((request) => (
-                    <TableRow
-                      key={request.id}
-                      className="selected-row"
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {request.school.name}
-                      </TableCell>
-                      <TableCell align="right">{request.grade}</TableCell>
-                      <TableCell align="right">{request.status}</TableCell>
-                      <TableCell align="right">Action Placeholder</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
+            // <TableContainer>
+            //   <Table aria-label="simple table">
+            //     <TableHead>
+            //       <TableRow>
+            //         <TableCell style={{ fontWeight: "bold" }}>Scoala</TableCell>
+            //         <TableCell style={{ fontWeight: "bold" }} align="right">
+            //           Clasa
+            //         </TableCell>
+            //         <TableCell style={{ fontWeight: "bold" }} align="right">
+            //           Status
+            //         </TableCell>
+            //         <TableCell style={{ fontWeight: "bold" }} align="right">
+            //           Actiune
+            //         </TableCell>
+            //       </TableRow>
+            //     </TableHead>
+            //     <TableBody>
+            //       {requestsData.map((request) => (
+            //         <TableRow
+            //           key={request.id}
+            //           className="selected-row"
+            //           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+            //         >
+            //           <TableCell component="th" scope="row">
+            //             {request.school.name}
+            //           </TableCell>
+            //           <TableCell align="right">{request.grade}</TableCell>
+            //           <TableCell align="right">{request.status}</TableCell>
+            //           <TableCell align="right">Action Placeholder</TableCell>
+            //         </TableRow>
+            //       ))}
+            //     </TableBody>
+            //   </Table>
+            // </TableContainer>
+            <CustomTable
+              tableHeaders={["Scoala", "Clasa", "Status", "Actiune"]}
+              tableData={requestsData}
+              tableDataOrder={["school.name", "grade", "status", "id"]} //! Finish this integration (think about school.name)
+            />
           ) : (
             <h3
               style={{
