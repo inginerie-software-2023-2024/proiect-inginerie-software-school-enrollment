@@ -1,0 +1,30 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres_container
+    environment:
+      POSTGRES_USER: usr1
+      POSTGRES_PASSWORD: pantatining-forminsting-humplionicaned
+      POSTGRES_DB: ses
+    ports:
+      - "5432:5432"
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin_container
+    environment:
+      PGADMIN_DEFAULT_EMAIL: what@user.com
+      PGADMIN_DEFAULT_PASSWORD: pantatining-forminsting-humplionicaned
+    ports:
+      - "8081:80"
+    depends_on:
+      - postgres
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      - postgres
+    ports:
+      - "8080:8080"

@@ -4,6 +4,12 @@ import { Home } from "./views/home"
 import { SignUp } from "./views/signUp"
 import { LogIn } from "./views/logIn"
 import { Schools } from "./views/schools"
+import React from "react"
+import LogOut from "./views/logOut/LogOut"
+import Profile from "./views/profile/Profile"
+import NotFoundPage from "./views/errors/NotFoundPage"
+import AdminDashBoard from "./views/admin/AdminDashboard"
+import { Toaster } from "sonner"
 
 function App() {
   return (
@@ -16,8 +22,15 @@ function App() {
           <Route path={"/scoli"} element={<Schools />} />
           <Route path={"/sign-up"} element={<SignUp />} />
           <Route path={"/log-in"} element={<LogIn />} />
+          <Route path={"/log-out"} element={<LogOut />} />
+          <Route path={"/profile"} element={<Profile />} />
+          <Route path={"/admin"} element={<AdminDashBoard />} />
+          <Route path={"/scoala-mea"} element={<AdminDashBoard />} />
+          <Route path={"/clasa-mea"} element={<AdminDashBoard />} />
+          <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>
+      <Toaster richColors />
     </div>
   )
 }
