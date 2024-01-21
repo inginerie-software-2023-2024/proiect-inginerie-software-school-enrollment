@@ -99,6 +99,7 @@ public class StudentController {
     ) {
         String parentUsername = jwtUtil.resolveClaims(token).getSubject();
         student.setParentUsername(parentUsername);
+        System.out.println(student);
         try{
             studentService.update(student);
         } catch (NotFoundException e) {
