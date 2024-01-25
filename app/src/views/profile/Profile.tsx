@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { Card } from "@mui/material"
 import "./style.css"
 import ChildrenList from "./ChildrenList"
+import ProfileManagement from "./ProfileManagement"
 
 export default function Profile() {
   const currentRole = getCurrentUserRole()
@@ -30,10 +31,20 @@ export default function Profile() {
 
   return (
     <>
-      <Card className="role-display" style={{ margin: "1em" }}>
-        {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
-        {roleMapping[userRole!]}
-        <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
+      <Card
+        style={{
+          margin: "1em",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-around",
+        }}
+      >
+        <div className="role-display">
+          {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
+          {roleMapping[userRole!]}
+          <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
+        </div>
+        <ProfileManagement />
       </Card>
 
       {userRole === "parent" ? (

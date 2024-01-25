@@ -2,6 +2,7 @@ package SchoolEnrollmentSystem.backend.controller;
 
 import SchoolEnrollmentSystem.backend.DTOs.LoginDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RegisterDTO;
+import SchoolEnrollmentSystem.backend.DTOs.UserInfoDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.service.AdminService;
@@ -152,5 +153,33 @@ public class UserController {
         String newToken = jwtUtil.createToken(user, role);
 
         return new ResponseEntity<>(newToken, HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(
+            @PathVariable String username,
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+        String usernameFromToken = claims.getSubject();
+        if((isAdmin == null || !isAdmin) && (isPrincipal == null || !isPrincipal) && !username.equals(usernameFromToken))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        UserInfoDTO userInfoDTO = new UserInfoDTO(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
+
+        return new ResponseEntity<>(userInfoDTO, HttpStatus.OK);
     }
 }

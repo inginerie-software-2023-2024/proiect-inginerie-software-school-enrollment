@@ -49,6 +49,19 @@ export default function ChildDetails({
     fetchData()
   }, [])
 
+  let tableRequestsData = []
+
+  useEffect(() => {
+    tableRequestsData = requestsData.map((request) => {
+      return {
+        school: request.school.name,
+        grade: request.grade,
+        status: request.status,
+        id: request.id,
+      }
+    })
+  }, [requestsData])
+
   const handleSave = () => {
     if (!validateStudentData(childData)) return
     if (childData === childInfo) {
@@ -185,6 +198,7 @@ export default function ChildDetails({
             marginTop: "1em",
             display: "flex",
             justifyContent: "space-around",
+            gap: "1em",
           }}
         >
           {!editMode ? (
@@ -237,44 +251,10 @@ export default function ChildDetails({
         </h2>
         {requestsData.length > 0 ? (
           childData.school == null ? (
-            // <TableContainer>
-            //   <Table aria-label="simple table">
-            //     <TableHead>
-            //       <TableRow>
-            //         <TableCell style={{ fontWeight: "bold" }}>Scoala</TableCell>
-            //         <TableCell style={{ fontWeight: "bold" }} align="right">
-            //           Clasa
-            //         </TableCell>
-            //         <TableCell style={{ fontWeight: "bold" }} align="right">
-            //           Status
-            //         </TableCell>
-            //         <TableCell style={{ fontWeight: "bold" }} align="right">
-            //           Actiune
-            //         </TableCell>
-            //       </TableRow>
-            //     </TableHead>
-            //     <TableBody>
-            //       {requestsData.map((request) => (
-            //         <TableRow
-            //           key={request.id}
-            //           className="selected-row"
-            //           sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-            //         >
-            //           <TableCell component="th" scope="row">
-            //             {request.school.name}
-            //           </TableCell>
-            //           <TableCell align="right">{request.grade}</TableCell>
-            //           <TableCell align="right">{request.status}</TableCell>
-            //           <TableCell align="right">Action Placeholder</TableCell>
-            //         </TableRow>
-            //       ))}
-            //     </TableBody>
-            //   </Table>
-            // </TableContainer>
-            <CustomTable
+            <CustomTable //! TODO: test if this works after request system is fully implemented.
               tableHeaders={["Scoala", "Clasa", "Status", "Actiune"]}
-              tableData={requestsData}
-              tableDataOrder={["school.name", "grade", "status", "id"]} //! Finish this integration (think about school.name)
+              tableData={tableRequestsData}
+              tableDataOrder={["school", "grade", "status", "id"]}
             />
           ) : (
             <h3
