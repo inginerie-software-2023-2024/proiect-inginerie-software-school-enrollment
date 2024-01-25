@@ -8,6 +8,8 @@ services:
       POSTGRES_DB: ses
     ports:
       - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
 
   pgadmin:
     image: dpage/pgadmin4:latest
@@ -23,8 +25,21 @@ services:
   backend:
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: Dockerfile.backend
     depends_on:
       - postgres
     ports:
       - "8080:8080"
+    
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile.frontend
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+      - "3000:3000"
+
+volumes:
+  pgdata:

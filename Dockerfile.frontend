@@ -1,0 +1,6 @@
+FROM node:18
+COPY --chmod=777 ./app /usr/src/frontend
+WORKDIR /usr/src/frontend
+ENV BROWSER none
+RUN npm install
+CMD ["npm", "run", "start", "--host"]
