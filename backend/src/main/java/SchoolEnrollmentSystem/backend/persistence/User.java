@@ -21,7 +21,7 @@ public class User {
     @Column(name = "id")
     private Integer id;
 
-    @Column(name = "username", unique = true)
+    @Column(name = "username", unique = true, nullable = false)
     @Getter
     private String username;
 
@@ -32,7 +32,7 @@ public class User {
     private String lastName;
 
     @Getter
-    @Column(name = "email")
+    @Column(name = "email", nullable = false)
     private String email;
 
     @Getter

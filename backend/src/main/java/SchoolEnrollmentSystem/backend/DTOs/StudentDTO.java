@@ -10,4 +10,12 @@ public class StudentDTO {
     private String lastName;
     private String cnp;
     private String parentUsername;
+
+    public StudentDTO(Integer age, String firstName, String lastName, String cnp, String parentUsername) {
+        this.age = age;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.cnp = cnp;
+        this.parentUsername = parentUsername;
+    }
 }
