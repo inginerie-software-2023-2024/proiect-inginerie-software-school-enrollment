@@ -51,20 +51,50 @@ public class User {
     @Column(name = "is_teacher")
     private boolean teacher;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
-    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private Class schoolClass;
 
-    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
     private School school;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     @JsonIgnore
     private School schoolTeacher;
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + ((username == null) ? 0 : username.hashCode());
+        result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
+        result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
+        result = prime * result + ((email == null) ? 0 : email.hashCode());
+        result = prime * result + ((passwordHash == null) ? 0 : passwordHash.hashCode());
+        result = prime * result + ((passwordSalt == null) ? 0 : passwordSalt.hashCode());
+        result = prime * result + ((!teacher) ? 0 : 1);
+        result = prime * result + ((!director) ? 0 : 1);
+        result = prime * result + ((!parent) ? 0 : 1);
+
+
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", username='" + username +
+                ", firstName='" + firstName +
+                ", lastName='" + lastName +
+                ", email='" + email;
+    }
+
 }

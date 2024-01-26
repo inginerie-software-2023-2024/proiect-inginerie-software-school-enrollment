@@ -55,6 +55,7 @@ public class UserService {
     }
 
     public Boolean principalHasAccessToClass(String principalUsername, Integer classId) {
+//        System.out.println("principalUsername: " + principalUsername);
         User principal = findByUsername(principalUsername);
 
         if(principal == null)
