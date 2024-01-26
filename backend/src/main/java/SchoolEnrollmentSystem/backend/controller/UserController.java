@@ -4,6 +4,7 @@ import SchoolEnrollmentSystem.backend.DTOs.LoginDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RegisterDTO;
 import SchoolEnrollmentSystem.backend.DTOs.UserInfoDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
+import SchoolEnrollmentSystem.backend.persistence.Admin;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.service.AdminService;
 import io.jsonwebtoken.*;
@@ -109,9 +110,13 @@ public class UserController {
     }
 
     @PutMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserInfoDTO updatedUser) {
+    public ResponseEntity<?> updateUser(
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserInfoDTO updatedUser
+    ) {
         String username = jwtUtil.resolveClaims(token).getSubject();
         User user = userService.findByUsername(username);
+        Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
 
         if (user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
@@ -123,6 +128,13 @@ public class UserController {
         user.setLastName(updatedUser.getLastName());
 
         userService.updateUser(user);
+
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            admin.setUsername(updatedUser.getUsername());
+            adminService.updateAdmin(admin);
+        }
+
         return new ResponseEntity<>("User updated.", HttpStatus.OK);
     }
 
@@ -131,8 +143,10 @@ public class UserController {
             @RequestHeader("Authorization") String token,
             @RequestBody String newPassword
     ) {
-        String username = jwtUtil.resolveClaims(token).getSubject();
+        Claims claims = jwtUtil.resolveClaims(token);
+        String username = claims.getSubject();
         User user = userService.findByUsername(username);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
 
         if (user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
@@ -145,6 +159,13 @@ public class UserController {
         user.setPasswordSalt(salt);
 
         userService.updateUser(user);
+
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            admin.setHash(hashedPassword);
+            admin.setSalt(salt);
+            adminService.updateAdmin(admin);
+        }
 
         return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
