@@ -201,7 +201,7 @@ export default function UpdateProfileData() {
               color: "black",
               marginTop: "1em",
             }}
-            onClick={handleDetailsUpdate} // TODO: implement the update functionality
+            onClick={handleDetailsUpdate}
           >
             Salveaza
           </Button>

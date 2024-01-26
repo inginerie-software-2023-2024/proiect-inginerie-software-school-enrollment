@@ -76,9 +76,16 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String token) {
-        String username = jwtUtil.resolveClaims(token).getSubject();
+    public ResponseEntity<?> deleteAccount(
+            @RequestHeader("Authorization") String token,
+            @RequestBody LoginDTO dummyLoginDTO
+    ) {
+        String password = dummyLoginDTO.getPassword();
+        System.out.println("Parola primita: " + password);
+        Claims claims = jwtUtil.resolveClaims(token);
+        String username = claims.getSubject();
         User user = userService.findByUsername(username);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
 
         if (user == null) {
             return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
@@ -92,7 +99,14 @@ public class UserController {
                     HttpStatus.FORBIDDEN
             );
 
+        if (!BCrypt.hashpw(password, user.getPasswordSalt()).equals(user.getPasswordHash()))
+            return new ResponseEntity<>("Incorrect password", HttpStatus.BAD_REQUEST);
+
         userService.deleteUserById(user.getId());
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            adminService.deleteAdminById(admin.getId());
+        }
 
         return new ResponseEntity<>("User account deleted successfully", HttpStatus.OK);
     }
