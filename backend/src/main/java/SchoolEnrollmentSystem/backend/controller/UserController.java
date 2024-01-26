@@ -80,8 +80,16 @@ public class UserController {
         User user = userService.findByUsername(username);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
+
+        boolean anyStudentWithSchool = user.getStudents().stream()
+                                            .anyMatch(student -> student.getSchool() != null);
+        if(anyStudentWithSchool)
+            return new ResponseEntity<>(
+                    "Cannot delete user because there it has children enrolled to a school",
+                    HttpStatus.FORBIDDEN
+            );
 
         userService.deleteUserById(user.getId());
 
@@ -100,13 +108,13 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PostMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @RequestBody RegisterDTO updatedUser) {
+    @PutMapping("/updateUser")
+    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @RequestBody UserInfoDTO updatedUser) {
         String username = jwtUtil.resolveClaims(token).getSubject();
         User user = userService.findByUsername(username);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
 
         user.setUsername(updatedUser.getUsername());
@@ -114,21 +122,31 @@ public class UserController {
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
 
-        User databaseUser = userService.findByUsername(updatedUser.getUsername());
-        if (BCrypt.hashpw(updatedUser.getPassword(), databaseUser.getPasswordSalt()).equals(databaseUser.getPasswordHash())) {
-            user.setPasswordSalt(databaseUser.getPasswordSalt());
-            user.setPasswordHash(databaseUser.getPasswordHash());
-        } else {
-            String salt = BCrypt.gensalt();
-            String hashedPassword = BCrypt.hashpw(updatedUser.getPassword(), salt);
-
-            user.setPasswordHash(hashedPassword);
-            user.setPasswordSalt(salt);
-        }
-
-
         userService.updateUser(user);
         return new ResponseEntity<>("User updated.", HttpStatus.OK);
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<?> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody String newPassword
+    ) {
+        String username = jwtUtil.resolveClaims(token).getSubject();
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        String salt = BCrypt.gensalt();
+        String hashedPassword = BCrypt.hashpw(newPassword, salt);
+
+        user.setPasswordHash(hashedPassword);
+        user.setPasswordSalt(salt);
+
+        userService.updateUser(user);
+
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
 
     @PostMapping("/changeRole/{role}")
