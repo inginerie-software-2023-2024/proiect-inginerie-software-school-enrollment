@@ -14,7 +14,7 @@ export default function UpdateProfileData() {
     email: "",
   })
 
-  const naveigate = useNavigate()
+  const navigate = useNavigate()
 
   const [editMode, setEditMode] = useState(false)
 
@@ -105,32 +105,45 @@ export default function UpdateProfileData() {
   ]
 
   const handleDetailsUpdate = () => {
-    if(updateData.username === "" || updateData.firstName === "" || updateData.lastName === "" || updateData.email === "") {
+    if (
+      updateData.username === "" ||
+      updateData.firstName === "" ||
+      updateData.lastName === "" ||
+      updateData.email === ""
+    ) {
       toast.info("Toate campurile sunt obligatorii!")
       return
     }
-    if(updateData === initialUserData) {
+    if (updateData === initialUserData) {
       toast.info("Nu s-a facut nicio modificare!")
       return
     }
     const updateUserData = async () => {
       try {
+        const requestOptions = {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(updateData),
+        }
         const response = await fetchWithToken(
-          domainName + `/users/${localStorage.getItem("username")}`,
-          "POST",
-          updateData,
+          domainName + "/users/updateUser",
+          requestOptions,
         )
         if (response.status === 200) {
           toast.success("Datele au fost actualizate cu succes!")
           setEditMode(false)
           setInitialUserData({ ...updateData })
+          navigate("/log-out")
+        } else if (response.status === 404) {
+          toast.error("Utilizatorul nu a fost gasit!")
         } else {
           toast.error("A aparut o eroare!")
         }
       } catch (error) {
         console.log(error)
-      } 
+      }
     }
+    updateUserData()
   }
 
   return (
