@@ -185,7 +185,7 @@ export default function ChildDetails({
 
   return (
     <div
-      className="two-columns"
+      className="two-columns-child-details"
       style={{ width: "fit-content", maxWidth: "100vw", minWidth: "1000px" }}
     >
       <div>

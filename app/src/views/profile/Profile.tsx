@@ -11,6 +11,7 @@ export default function Profile() {
   const currentRole = getCurrentUserRole()
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(currentRole)
+  const [, setDummyState] = useState(false)
 
   const updateRole = (role: string) => {
     setUserRole(role)
@@ -31,21 +32,11 @@ export default function Profile() {
 
   return (
     <>
-      <Card
-        style={{
-          margin: "1em",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-around",
-        }}
-      >
-        <div className="role-display">
-          {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
-          {roleMapping[userRole!]}
-          <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
-        </div>
-        <ProfileManagement />
-      </Card>
+      <div className="role-display">
+        {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
+        {roleMapping[userRole!]}
+        <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
+      </div>
 
       {userRole === "parent" ? (
         <ChildrenList
@@ -55,6 +46,8 @@ export default function Profile() {
           }}
         />
       ) : null}
+
+      <ProfileManagement />
     </>
   )
 }
