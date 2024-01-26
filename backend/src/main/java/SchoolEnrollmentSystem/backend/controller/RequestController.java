@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.controller;
 
+import SchoolEnrollmentSystem.backend.DTOs.GetRequestDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RequestDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
@@ -19,7 +20,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -48,7 +51,19 @@ public class RequestController {
         if(isAdmin == null || !isAdmin)
             return ResponseEntity.badRequest().body("Unauthorized");
 
-        return ResponseEntity.ok(requestService.getAllRequests());
+        List<GetRequestDTO> requestDTOs = requestService.getAllRequests().stream()
+                .map(request -> {
+                    GetRequestDTO requestDTO = new GetRequestDTO();
+                    requestDTO.setStudentId(request.getStudent().getId());
+                    requestDTO.setGrade(request.getGrade());
+                    requestDTO.setSchoolId(request.getSchool().getId());
+                    requestDTO.setId(request.getId());
+                    requestDTO.setStatus(request.getStatus());
+                    return requestDTO;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(requestDTOs);
     }
 
     @GetMapping("/ofSchool/{schoolId}")

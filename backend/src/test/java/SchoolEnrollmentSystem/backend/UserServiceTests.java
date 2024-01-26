@@ -85,17 +85,17 @@ public class UserServiceTests {
         Assertions.assertNull(userService.findByUsername("nu_exista"));
     }
 
-//    @Test
-//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-//    @Transactional
-//    void testPrincipalHasAccesToClass() {
-//        Assertions.assertTrue(userService.principalHasAccessToClass("director1", 1006));
-//    }
-//
-//    @Test
-//    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
-//    @Transactional
-//    void testPrincipalDoesNotHasAccesToClass() {
-//        Assertions.assertFalse(userService.principalHasAccessToClass("director2", 1006));
-//    }
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    @Transactional
+    void testPrincipalHasAccesToClass() {
+        Assertions.assertTrue(userService.principalHasAccessToClass("director1", 1006));
+    }
+
+    @Test
+    @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+    @Transactional
+    void testPrincipalDoesNotHasAccesToClass() {
+        Assertions.assertFalse(userService.principalHasAccessToClass("director2", 1006));
+    }
 }

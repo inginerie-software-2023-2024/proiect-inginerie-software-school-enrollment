@@ -8,6 +8,7 @@ import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Student;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.RequestRepository;
+import SchoolEnrollmentSystem.backend.repository.StudentRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,9 @@ import java.util.stream.Collectors;
 public class RequestService {
     @Autowired
     private RequestRepository requestRepository;
+
+    @Autowired
+    private StudentRepository studentRepository;
 
     public List<Request> getAllRequests() {
         return requestRepository.findAll();
@@ -85,6 +89,12 @@ public class RequestService {
         Request request = requestOptional.get();
         request.setStatus(status);
         requestRepository.save(request);
+
+        if (status == RequestStatus.CONFIRMED) {
+            Student student = request.getStudent();
+            student.setSchool(request.getSchool());
+            studentRepository.save(student);
+        }
         return true;
     }
 }

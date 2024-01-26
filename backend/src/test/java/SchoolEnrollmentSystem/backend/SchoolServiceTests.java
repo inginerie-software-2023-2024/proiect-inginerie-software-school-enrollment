@@ -6,4 +6,5 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 public class SchoolServiceTests {
     // testeaza adaugare clasa
     // testeaza cautare dupa principalName
+    // testeaza adugare profesor la scoala
 }
