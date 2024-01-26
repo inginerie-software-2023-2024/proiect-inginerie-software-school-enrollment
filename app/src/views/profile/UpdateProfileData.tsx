@@ -1,7 +1,11 @@
 import { Button } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import Form from "../../components/form/Form"
-import { domainName } from "../../generalConstants"
+import {
+  domainName,
+  emailRegex,
+  romanianNameRegex,
+} from "../../generalConstants"
 import { fetchWithToken } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
 import { toast } from "sonner"
@@ -114,10 +118,27 @@ export default function UpdateProfileData() {
       toast.info("Toate campurile sunt obligatorii!")
       return
     }
-    if (updateData === initialUserData) {
+    if (
+      updateData.username === initialUserData.username &&
+      updateData.firstName === initialUserData.firstName &&
+      updateData.lastName === initialUserData.lastName &&
+      updateData.email === initialUserData.email
+    ) {
       toast.info("Nu s-a facut nicio modificare!")
       return
     }
+    if (
+      !romanianNameRegex.test(updateData.firstName) ||
+      !romanianNameRegex.test(updateData.lastName)
+    ) {
+      toast.info("Numele sau prenumele nu este valid!")
+      return
+    }
+    if (!emailRegex.test(updateData.email)) {
+      toast.info("Email-ul nu este valid!")
+      return
+    }
+
     const updateUserData = async () => {
       try {
         const requestOptions = {
