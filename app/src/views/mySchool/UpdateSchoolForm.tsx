@@ -5,14 +5,13 @@ import { toast } from "sonner"
 import { fetchWithToken } from "../../tokenUtils"
 import { domainName } from "../../generalConstants"
 import { SchoolData } from "../../interfaces/SchoolData"
+import "./style.css"
 
 export default function UpdateSchoolForm({
   initialSchoolInfo,
-  reRenderRoot,
   setSchoolInfo,
 }: {
   initialSchoolInfo: SchoolData
-  reRenderRoot: () => void
   setSchoolInfo: (schoolInfo: SchoolData) => void
 }) {
   const [formDetails, setFormDetails] = useState(initialSchoolInfo)

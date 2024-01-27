@@ -5,6 +5,7 @@ import SchoolEnrollmentSystem.backend.DTOs.ClassDTO;
 import SchoolEnrollmentSystem.backend.DTOs.SchoolAddDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
+import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -127,6 +128,36 @@ public class SchoolController {
             return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok(schoolOptional.get());
+    }
+
+    @PutMapping(path = "/addTeacher/{usernameToInvite}")
+    public ResponseEntity<?> inviteTeacher(
+            @RequestHeader("Authorization") String token,
+            @PathVariable String usernameToInvite
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Nu aveti nici o scoala inregistrata", HttpStatus.NOT_FOUND);
+
+        School school = schoolOptional.get();
+        try {
+            schoolService.addTeacherToSchool(usernameToInvite, school);
+        }
+        catch(NotFoundException e) {
+            return new ResponseEntity<>("Utilizatorul nu a fost gasit", HttpStatus.NOT_FOUND);
+        }
+        catch(AlreadyAssignedException e) {
+            return new ResponseEntity<>("Utilizatorul este deja profesor la o scoala", HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok("Profesor adaugat cu succes");
     }
 
     @PostMapping(path = "/addClass")

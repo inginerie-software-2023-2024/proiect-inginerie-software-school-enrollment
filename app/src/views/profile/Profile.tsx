@@ -31,6 +31,17 @@ export default function Profile() {
 
   return (
     <>
+      <h1
+        style={{
+          fontWeight: "bold",
+          width: "100vw",
+          textAlign: "center",
+          display: "block",
+          margin: "0.5em 0 0.5em 0",
+        }}
+      >
+        Profil
+      </h1>
       <div className="role-display">
         {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
         {roleMapping[userRole!]}
