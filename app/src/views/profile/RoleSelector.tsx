@@ -31,6 +31,13 @@ export default function RoleSelector({
     setSelectedRole(event.target.value as string)
   }
 
+  const roleMapping: { [key: string]: string } = {
+    admin: "administrator",
+    principal: "director",
+    teacher: "profesor",
+    parent: "parinte",
+  }
+
   const handleSubmit = () => {
     if (selectedRole === currentRole) {
       toast.error("Deja aveti acest rol selectat")
@@ -86,11 +93,11 @@ export default function RoleSelector({
           {allRoles.map((role, index) =>
             role === currentRole ? (
               <MenuItem disabled key={index} value={role}>
-                {toTitleCase(role)}
+                {toTitleCase(roleMapping[role])}
               </MenuItem>
             ) : (
               <MenuItem key={index} value={role}>
-                {toTitleCase(role)}
+                {toTitleCase(roleMapping[role])}
               </MenuItem>
             ),
           )}

@@ -80,7 +80,12 @@ export const NavBar = () => {
   return (
     <nav
       className="navbar navbar-expand-lg"
-      style={{ backgroundColor: "var(--main-background-color)" }}
+      style={{
+        backgroundColor: "var(--main-background-color)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+      }}
     >
       <div className="container-fluid">
         <button
