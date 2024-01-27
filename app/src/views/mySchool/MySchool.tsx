@@ -5,6 +5,7 @@ import { SchoolData } from "../../interfaces/SchoolData"
 import { domainName } from "../../generalConstants"
 import NoSchoolComponent from "./NoSchoolComponent"
 import SchoolManagement from "./SchoolManagement"
+import "./style.css"
 
 export default function MySchool() {
   const navigate = useNavigate()
@@ -47,6 +48,7 @@ export default function MySchool() {
         height: "100vh",
       }}
     >
+      <h1 style={{ fontWeight: "bold", display: "block" }}>Scoala Mea</h1>
       {schoolInfo === null ? (
         <NoSchoolComponent reRenderRoot={reRenderThis} />
       ) : (
