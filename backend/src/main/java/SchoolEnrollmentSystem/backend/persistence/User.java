@@ -66,7 +66,7 @@ public class User {
     @JsonIgnore
     private School school;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     @JsonIgnore
     private School schoolTeacher;
