@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -62,5 +63,19 @@ public class Student {
 
 
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Student student = (Student) o;
+
+        if (!Objects.equals(id, student.id)) return false;
+        if (!Objects.equals(firstName, student.firstName)) return false;
+        if (!Objects.equals(lastName, student.lastName)) return false;
+        if (!Objects.equals(cnp, student.cnp)) return false;
+        return Objects.equals(age, student.age);
     }
 }

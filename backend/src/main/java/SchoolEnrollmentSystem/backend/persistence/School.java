@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -68,5 +69,18 @@ public class School {
                 ", description='" + description + '\'' +
                 ", principalId=" + principalId +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        School school = (School) o;
+
+        if (!Objects.equals(id, school.id)) return false;
+        if (!Objects.equals(name, school.name)) return false;
+        if (!Objects.equals(description, school.description)) return false;
+        return Objects.equals(principalId, school.principalId);
     }
 }

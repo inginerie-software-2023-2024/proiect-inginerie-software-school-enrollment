@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -44,5 +45,17 @@ public class Class {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((maxNumberOfStudents == null) ? 0 : maxNumberOfStudents.hashCode());
         return result;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Class aClass = (Class) o;
+
+        if (!Objects.equals(id, aClass.id)) return false;
+        if (!Objects.equals(name, aClass.name)) return false;
+        return Objects.equals(maxNumberOfStudents, aClass.maxNumberOfStudents);
     }
 }

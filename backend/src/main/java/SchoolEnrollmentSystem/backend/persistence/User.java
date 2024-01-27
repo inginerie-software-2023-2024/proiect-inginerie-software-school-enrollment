@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -97,4 +98,22 @@ public class User {
                 ", email='" + email;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        User user = (User) o;
+
+        if (parent != user.parent) return false;
+        if (director != user.director) return false;
+        if (teacher != user.teacher) return false;
+        if (!Objects.equals(id, user.id)) return false;
+        if (!Objects.equals(username, user.username)) return false;
+        if (!Objects.equals(firstName, user.firstName)) return false;
+        if (!Objects.equals(lastName, user.lastName)) return false;
+        if (!Objects.equals(email, user.email)) return false;
+        if (!Objects.equals(passwordHash, user.passwordHash)) return false;
+        return Objects.equals(passwordSalt, user.passwordSalt);
+    }
 }
