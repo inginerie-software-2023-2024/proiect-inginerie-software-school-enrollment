@@ -52,14 +52,14 @@ public class SchoolService {
         return schoolRepository.findAll().stream().filter(school -> school.getPrincipal().getUsername().equals(username)).findFirst();
     }
 
-    public void addClass(Class c) throws AlreadyAssignedException {
+    public Class addClass(Class c) throws AlreadyAssignedException {
         if(classRepository.findByNameAndSchool(c.getName(), c.getSchool().getId()).isPresent())
             throw new AlreadyAssignedException();
 
-        classRepository.save(c);
+        return classRepository.save(c);
     }
 
-    public void addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
+    public User addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
         User teacher = userService.findByUsername(username);
         if(teacher == null)
             throw new NotFoundException();
@@ -72,5 +72,7 @@ public class SchoolService {
         school.getTeachers().add(teacher);
         userService.updateUser(teacher);
         update(school);
+
+        return teacher;
     }
 }

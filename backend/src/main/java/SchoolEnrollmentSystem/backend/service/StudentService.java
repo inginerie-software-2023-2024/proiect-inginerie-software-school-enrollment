@@ -26,7 +26,7 @@ public class StudentService {
     private UserService userService;
 
 
-    public void addStudent(StudentDTO studentDTO) throws UniqueResourceExistent
+    public Student addStudent(StudentDTO studentDTO) throws UniqueResourceExistent
     {
         if(studentRepository.findByCnp(studentDTO.getCnp()) != null)
             throw new UniqueResourceExistent();
@@ -42,6 +42,7 @@ public class StudentService {
         student.setCnp(studentDTO.getCnp());
         student.setParent(parent);
         studentRepository.save(student);
+        return student;
     }
 
     public void deleteStudent(Integer id) throws NotFoundException
@@ -142,14 +143,14 @@ public class StudentService {
         if(student.getSchoolClass() == null)
             throw new NullArgumentException();
 
+
         Integer currentStudentClassId = student.getSchoolClass().getId();
+        removeStudentFromClass(studentId, currentStudentClassId);
+
         try {
-            removeStudentFromClass(studentId, currentStudentClassId);
-        }
-        finally {
+            assignStudentToClass(studentId, classId);
+        } catch (Exception e) {
             assignStudentToClass(studentId, currentStudentClassId);
         }
-
-        assignStudentToClass(studentId, classId);
     }
 }
