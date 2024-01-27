@@ -1,17 +1,6 @@
 import React, { useEffect, useState } from "react"
-import PropTypes from "prop-types"
 import { ChildData } from "../../interfaces/ChildData"
-import {
-  Button,
-  Grid,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  TextField,
-} from "@mui/material"
+import { Button } from "@mui/material"
 import { SchoolRequestData } from "../../interfaces/SchoolRequestData"
 import { domainName } from "../../generalConstants"
 import { fetchWithToken } from "../../tokenUtils"

@@ -10,6 +10,7 @@ import Profile from "./views/profile/Profile"
 import NotFoundPage from "./views/errors/NotFoundPage"
 import AdminDashBoard from "./views/admin/AdminDashboard"
 import { Toaster } from "sonner"
+import ChildrenManagement from "./views/childrenManagement/ChildrenManagement"
 
 function App() {
   return (
@@ -26,7 +27,8 @@ function App() {
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/admin"} element={<AdminDashBoard />} />
           <Route path={"/scoala-mea"} element={<AdminDashBoard />} />
-          <Route path={"/clasa-mea"} element={<AdminDashBoard />} />
+          <Route path={"/my-children"} element={<ChildrenManagement />} />
+          {/* <Route path={"/clasa-mea"} element={<AdminDashBoard />} /> */}
           <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>

@@ -1,15 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  Modal,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-} from "@mui/material"
+import { Box, Button, Card, Modal } from "@mui/material"
 import React, { useEffect, useState } from "react"
 import "./style.css"
 import { fetchWithToken } from "../../tokenUtils"

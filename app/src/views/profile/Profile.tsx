@@ -4,7 +4,6 @@ import { getCurrentUserRole } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
 import { Card } from "@mui/material"
 import "./style.css"
-import ChildrenList from "./ChildrenList"
 import ProfileManagement from "./ProfileManagement"
 
 export default function Profile() {
@@ -37,16 +36,6 @@ export default function Profile() {
         {roleMapping[userRole!]}
         <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
       </div>
-
-      {userRole === "parent" ? (
-        <ChildrenList
-          tableStyle={{
-            maxHeight: "300px",
-            overflowY: "scroll",
-          }}
-        />
-      ) : null}
-
       <ProfileManagement />
     </>
   )

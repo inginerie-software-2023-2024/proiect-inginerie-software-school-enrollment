@@ -1,0 +1,9 @@
+.padded-fit-wrapper {
+  padding: 1rem;
+  width: fit-content;
+}
+
+.centering-wrapper {
+  display: grid;
+  place-items: center;
+}

@@ -37,6 +37,13 @@ export const NavBar = () => {
         localStorage.getItem("token") !== null &&
         getCurrentUserRole() === "teacher",
     },
+    {
+      name: "Copiii mei",
+      path: "/my-children",
+      access:
+        localStorage.getItem("token") !== null &&
+        getCurrentUserRole() === "parent",
+    },
   ]
   const guestPagesRightNotLoggedIn = [
     {
