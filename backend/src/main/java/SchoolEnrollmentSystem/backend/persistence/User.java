@@ -38,9 +38,11 @@ public class User {
 
     @Getter
     @Column(name = "hash")
+    @JsonIgnore
     private String passwordHash;
 
     @Column(name = "salt")
+    @JsonIgnore
     private String passwordSalt;
 
     @Column(name = "is_parent")
@@ -52,15 +54,15 @@ public class User {
     @Column(name = "is_teacher")
     private boolean teacher;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL, fetch = FetchType.LAZY )
+    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
-    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL)
     @JsonIgnore
     private Class schoolClass;
 
-    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL)
     @JsonIgnore
     private School school;
 

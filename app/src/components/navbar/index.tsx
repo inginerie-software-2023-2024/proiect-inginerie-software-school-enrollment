@@ -25,14 +25,14 @@ export const NavBar = () => {
     },
     {
       name: "Scoala mea",
-      path: "/scoala-mea",
+      path: "/my-school",
       access:
         localStorage.getItem("token") !== null &&
         getCurrentUserRole() === "principal",
     },
     {
       name: "Clasa mea",
-      path: "/clasa-mea",
+      path: "/my-class",
       access:
         localStorage.getItem("token") !== null &&
         getCurrentUserRole() === "teacher",

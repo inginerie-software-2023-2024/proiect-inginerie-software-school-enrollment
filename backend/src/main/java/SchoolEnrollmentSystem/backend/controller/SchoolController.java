@@ -60,13 +60,12 @@ public class SchoolController {
     }
 
     @PostMapping(path = "/addSchool")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> addSchool(@RequestHeader("Authorization") String token, @RequestBody SchoolAddDTO schoolAddDTO) {
         Claims principalClaim = jwtUtil.resolveClaims(token);
         Boolean isPrincipal = principalClaim.get("principal", Boolean.class);
 
         if(isPrincipal == null || !isPrincipal)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
 
         String principalUsername = principalClaim.getSubject();
         Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
@@ -84,6 +83,50 @@ public class SchoolController {
         schoolService.addSchool(school);
 
         return ResponseEntity.ok("School added");
+    }
+
+    @PutMapping(path = "/updateMySchool")
+    public ResponseEntity<?> updateMySchool(
+            @RequestHeader("Authorization") String token,
+            @RequestBody SchoolAddDTO schoolAddDTO
+    ) {
+        Claims principalClaim = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = principalClaim.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = principalClaim.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
+
+        School school = schoolOptional.get();
+        school.setName(schoolAddDTO.getName());
+        school.setDescription(schoolAddDTO.getDescription());
+
+        schoolService.update(school);
+
+        return ResponseEntity.ok("School updated");
+    }
+
+    @GetMapping(path = "/mySchoolDetails")
+    public ResponseEntity<?> getMySchoolDetails(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(schoolOptional.get());
     }
 
     @PostMapping(path = "/addClass")

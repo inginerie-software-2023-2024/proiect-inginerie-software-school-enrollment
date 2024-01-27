@@ -11,6 +11,7 @@ import NotFoundPage from "./views/errors/NotFoundPage"
 import AdminDashBoard from "./views/admin/AdminDashboard"
 import { Toaster } from "sonner"
 import ChildrenManagement from "./views/childrenManagement/ChildrenManagement"
+import MySchool from "./views/mySchool/MySchool"
 
 function App() {
   return (
@@ -26,7 +27,7 @@ function App() {
           <Route path={"/log-out"} element={<LogOut />} />
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/admin"} element={<AdminDashBoard />} />
-          <Route path={"/scoala-mea"} element={<AdminDashBoard />} />
+          <Route path={"/my-school"} element={<MySchool />} />
           <Route path={"/my-children"} element={<ChildrenManagement />} />
           {/* <Route path={"/clasa-mea"} element={<AdminDashBoard />} /> */}
           <Route path={"*"} element={<NotFoundPage />} />

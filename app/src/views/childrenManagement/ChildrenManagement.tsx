@@ -9,8 +9,8 @@ export default function ChildrenManagement() {
 
   useEffect(() => {
     if (
-      localStorage.getItem("token") == null ||
-      getCurrentUserRole() != "parent"
+      localStorage.getItem("token") === null ||
+      getCurrentUserRole() !== "parent"
     )
       navigate("/")
   }, [])

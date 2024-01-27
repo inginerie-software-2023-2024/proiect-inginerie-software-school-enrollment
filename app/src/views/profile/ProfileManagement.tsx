@@ -6,7 +6,7 @@ import { Card } from "@mui/material"
 export default function ProfileManagement() {
   return (
     <div
-      className="centering-wrapper"
+      className="centering-wrapper two-columns"
       style={{ margin: "2em 0 2em 0", gap: "2em" }}
     >
       <Card>
