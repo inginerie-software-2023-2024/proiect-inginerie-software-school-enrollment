@@ -3,6 +3,7 @@ package SchoolEnrollmentSystem.backend.controller;
 import SchoolEnrollmentSystem.backend.DTOs.AddTeacherToClassDTO;
 import SchoolEnrollmentSystem.backend.DTOs.ClassDTO;
 import SchoolEnrollmentSystem.backend.DTOs.SchoolAddDTO;
+import SchoolEnrollmentSystem.backend.DTOs.TeacherGetDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
@@ -110,6 +111,25 @@ public class SchoolController {
         schoolService.update(school);
 
         return ResponseEntity.ok("School updated");
+    }
+
+    @GetMapping(path = "/mySchoolTeachers")
+    public ResponseEntity<?> getMySchoolTeachers(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Unauthorized", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
+
+        System.out.println("ID-ul scolii din request: " + schoolOptional.get().getId());
+        return ResponseEntity.ok(schoolOptional.get().getTeachers().stream().map(TeacherGetDTO::new).toList());
     }
 
     @GetMapping(path = "/mySchoolDetails")

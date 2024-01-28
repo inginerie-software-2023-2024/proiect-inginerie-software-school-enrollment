@@ -6,7 +6,11 @@ import { fetchWithToken } from "../../tokenUtils"
 import { domainName } from "../../generalConstants"
 import { toast } from "sonner"
 
-export default function InviteTeachers() {
+export default function InviteTeachers({
+  reRenderRoot,
+}: {
+  reRenderRoot: () => void
+}) {
   const [teacher, setTeacher] = useState({ teacherName: "" })
   const fields = [
     {
@@ -40,6 +44,7 @@ export default function InviteTeachers() {
         if (response.status === 200) {
           setTeacher({ teacherName: "" })
           toast.success(responseMessage)
+          reRenderRoot()
         } else if (response.status !== 500) toast.error(responseMessage)
         else toast.error("A aparut o eroare")
       } catch (error) {

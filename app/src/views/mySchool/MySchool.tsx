@@ -45,10 +45,18 @@ export default function MySchool() {
       className="centering-wrapper"
       style={{
         width: "100vw",
-        height: "100vh",
+        margin: "0 0 2em 0",
       }}
     >
-      <h1 style={{ fontWeight: "bold", display: "block" }}>Scoala Mea</h1>
+      <h1
+        style={{
+          fontWeight: "bold",
+          display: "block",
+          margin: "0.5em 0 1em 0",
+        }}
+      >
+        Scoala Mea
+      </h1>
       {schoolInfo === null ? (
         <NoSchoolComponent reRenderRoot={reRenderThis} />
       ) : (

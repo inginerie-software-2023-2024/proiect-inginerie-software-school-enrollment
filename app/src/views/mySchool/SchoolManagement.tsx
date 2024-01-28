@@ -3,6 +3,7 @@ import { SchoolData } from "../../interfaces/SchoolData"
 import UpdateSchoolForm from "./UpdateSchoolForm"
 import InviteTeachers from "./InviteTeachers"
 import "./style.css"
+import TeachersTable from "./TeachersTable"
 
 export default function SchoolManagement({
   schoolInfo,
@@ -18,7 +19,8 @@ export default function SchoolManagement({
       className="centering-wrapper"
       style={{
         width: "100vw",
-        height: "auto",
+        gap: "5em",
+        marginBottom: "2em",
       }}
     >
       <div className="two-columns">
@@ -26,8 +28,9 @@ export default function SchoolManagement({
           initialSchoolInfo={schoolInfo}
           setSchoolInfo={setSchoolInfo}
         />
-        <InviteTeachers />
+        <InviteTeachers reRenderRoot={reRenderRoot} />
       </div>
+      <TeachersTable />
     </div>
   )
 }
