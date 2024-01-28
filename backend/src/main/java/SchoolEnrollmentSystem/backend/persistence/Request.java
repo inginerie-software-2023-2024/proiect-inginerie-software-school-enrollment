@@ -16,14 +16,14 @@ public class Request {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id")
     private Student student;
 
     @Column(name="grade" , nullable = false)
     private Integer grade;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     private School school;
 

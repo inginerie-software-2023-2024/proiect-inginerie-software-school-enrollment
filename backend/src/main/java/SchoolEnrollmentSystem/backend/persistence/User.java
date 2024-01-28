@@ -54,19 +54,19 @@ public class User {
     @Column(name = "is_teacher")
     private boolean teacher;
 
-    @OneToMany(mappedBy = "parent", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "parent")
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
-    @OneToOne(mappedBy = "teacher", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "teacher")
     @JsonIgnore
     private Class schoolClass;
 
-    @OneToOne(mappedBy = "principal", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "principal")
     @JsonIgnore
     private School school;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     @JsonIgnore
     private School schoolTeacher;

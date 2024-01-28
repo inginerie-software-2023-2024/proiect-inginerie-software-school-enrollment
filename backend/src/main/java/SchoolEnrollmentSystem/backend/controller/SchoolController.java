@@ -7,6 +7,7 @@ import SchoolEnrollmentSystem.backend.DTOs.TeacherGetDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
+import SchoolEnrollmentSystem.backend.exception.ResourcesNotCorrelatedException;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -216,6 +217,69 @@ public class SchoolController {
         }
 
         return ResponseEntity.ok("Clasa adaugata cu succes");
+    }
+
+    @PutMapping(path = "/removeTeacher/{teacherId}")
+    public ResponseEntity<?> removeTeacher(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer teacherId
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Directorul nu are nici o scoala adaugata", HttpStatus.NOT_FOUND);
+
+        try {
+            schoolService.removeTeacherFromSchool(teacherId, schoolOptional.get());
+        }
+        catch(NotFoundException e) {
+            return new ResponseEntity<>("Profesorul nu a fost gasit", HttpStatus.NOT_FOUND);
+        }
+        catch(ResourcesNotCorrelatedException e) {
+            return new ResponseEntity<>("Utilizatorul nu este profesor la scoala dumneavoastra", HttpStatus.BAD_REQUEST);
+        }
+
+        return ResponseEntity.ok("Profesor sters cu succes");
+    }
+
+    @PutMapping(path = "/removeClass/{classId}")
+    public ResponseEntity<?> removeClass(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer classId
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Directorul nu are nici o scoala adaugata", HttpStatus.NOT_FOUND);
+
+        try {
+            schoolService.removeClassFromSchool(classId, schoolOptional.get());
+        }
+        catch(ResourcesNotCorrelatedException e) {
+            return new ResponseEntity<>("Clasa nu este a scolii dumneavoastra", HttpStatus.BAD_REQUEST);
+        }
+        catch(NotFoundException e) {
+            return new ResponseEntity<>("Clasa nu a fost gasita", HttpStatus.NOT_FOUND);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>("Eroare la stergerea clasei", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return ResponseEntity.ok("Clasa stearsa cu succes");
     }
 
     @PostMapping(path = "/addTeacherToClass")

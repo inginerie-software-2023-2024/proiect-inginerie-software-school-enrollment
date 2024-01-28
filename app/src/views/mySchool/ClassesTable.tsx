@@ -2,6 +2,9 @@ import { Box, Button, Card, Modal } from "@mui/material"
 import React, { useState } from "react"
 import CustomTable from "../../components/table/CustomTable"
 import AddClassForm from "./AddClassForm"
+import { domainName } from "../../generalConstants"
+import { fetchWithToken } from "../../tokenUtils"
+import { toast } from "sonner"
 
 export default function ClassesTable({
   classesData,
@@ -20,29 +23,75 @@ export default function ClassesTable({
     "Profesor",
     "Numar Elevi",
     "Numar Maxim Elevi",
+    "Sterge Clasa",
   ]
 
   const tableStyle = {
     width: "100%",
-    height: "auto",
+    maxHeight: "50vh",
   }
 
   const tableHeaderStyle = {
     fontWeight: "bold",
+    backgroundColor: "#c0d1eb",
+  }
+
+  const removeClass = async (classId: number) => {
+    try {
+      const requestOptions = {
+        method: "PUT",
+      }
+
+      const response = await fetchWithToken(
+        `${domainName}/schools/removeClass/${classId}`,
+        requestOptions,
+      )
+      const responseMessage = await response.text()
+      if (response.status === 200) {
+        toast.success(responseMessage)
+        reRenderRoot()
+      } else if (response.status !== 500) toast.error(responseMessage)
+      else toast.error("A aparut o eroare")
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   return (
     <Card className="padded-fit-wrapper centering-wrapper">
-      <h3 style={{ fontWeight: "bold" }}>Clasele Dvs.</h3>
+      <h3 style={{ fontWeight: "bold", display: "block", marginBottom: "1em" }}>
+        Clasele Dvs.
+      </h3>
       {classesData.length > 0 ? (
         <CustomTable
           tableHeaders={tableHeaders}
-          tableData={classesData}
+          tableData={classesData.map((classData) => {
+            return {
+              ...classData,
+              deleteButton: (
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#fc6a62",
+                    color: "black",
+                    marginTop: "1em",
+                  }}
+                  onClick={() => {
+                    removeClass(classData.id)
+                  }}
+                  title="Stergerea clasei va elimina profesorul si elevii din clasa respectiva"
+                >
+                  Sterge
+                </Button>
+              ),
+            }
+          })}
           tableDataOrder={[
             "name",
             "teacher",
             "numberOfStudents",
             "maxNumberOfStudents",
+            "deleteButton",
           ]}
           tableStyle={tableStyle}
           tableHeaderStyle={tableHeaderStyle}

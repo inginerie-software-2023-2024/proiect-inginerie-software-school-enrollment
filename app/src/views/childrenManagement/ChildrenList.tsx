@@ -41,6 +41,7 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
 
   const tableHeaderStyle = {
     fontWeight: "bold",
+    backgroundColor: "#c0d1eb",
   }
 
   useEffect(() => {
@@ -122,7 +123,11 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
       style={{ width: "100vw" }}
     >
       <Card className="centering-wrapper padded-fit-wrapper">
-        <h1 style={{ fontWeight: "bold" }}>Copii Adaugati</h1>
+        <h1
+          style={{ fontWeight: "bold", display: "block", marginBottom: "1em" }}
+        >
+          Copii Adaugati
+        </h1>
         {childrenData.length === 0 ? (
           <>
             <br />

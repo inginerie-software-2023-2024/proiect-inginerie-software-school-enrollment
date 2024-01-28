@@ -39,15 +39,15 @@ public class Student {
     @Column(name="age", nullable = false)
     private Integer age;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "student")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     private School school;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "class_id", referencedColumnName = "id")
     private Class schoolClass;
 

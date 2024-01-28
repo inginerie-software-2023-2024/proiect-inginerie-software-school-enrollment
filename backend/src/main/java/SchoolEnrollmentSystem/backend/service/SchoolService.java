@@ -2,6 +2,7 @@ package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
+import SchoolEnrollmentSystem.backend.exception.ResourcesNotCorrelatedException;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -20,7 +21,7 @@ public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
     @Autowired
-    private ClassRepository classRepository;
+    private ClassService classService;
     @Autowired
     private UserService userService;
 
@@ -53,10 +54,7 @@ public class SchoolService {
     }
 
     public Class addClass(Class c) throws AlreadyAssignedException {
-        if(classRepository.findByNameAndSchool(c.getName(), c.getSchool().getId()).isPresent())
-            throw new AlreadyAssignedException();
-
-        return classRepository.save(c);
+        return classService.addClass(c);
     }
 
     public User addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
@@ -74,5 +72,38 @@ public class SchoolService {
         update(school);
 
         return teacher;
+    }
+
+    public void removeTeacherFromSchool(Integer teacherId, School school)
+        throws NotFoundException, ResourcesNotCorrelatedException {
+
+        User teacher = userService.getUserById(teacherId);
+
+        if(teacher == null)
+            throw new NotFoundException();
+
+        if(teacher.getSchoolTeacher() == null || !teacher.getSchoolTeacher().getId().equals(school.getId()))
+            throw new ResourcesNotCorrelatedException();
+
+
+        school.getTeachers().remove(teacher);
+
+        if(teacher.getSchoolClass() != null) {
+            teacher.getSchoolClass().setTeacher(null);
+            teacher.setSchoolClass(null);
+        }
+
+        teacher.setTeacher(false);
+        teacher.setSchoolTeacher(null);
+
+        userService.updateUser(teacher);
+        update(school);
+    }
+
+    public void removeClassFromSchool(Integer classId, School school) throws ResourcesNotCorrelatedException {
+        if(school.getClasses().stream().noneMatch(c -> c.getId().equals(classId)))
+            throw new ResourcesNotCorrelatedException();
+
+        classService.deleteClassById(classId);
     }
 }

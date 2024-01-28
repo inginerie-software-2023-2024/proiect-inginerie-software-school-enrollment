@@ -1,5 +1,7 @@
 package SchoolEnrollmentSystem.backend.service;
 
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
+import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.persistence.Class;
@@ -18,17 +20,39 @@ import java.util.Optional;
 public class ClassService {
     @Autowired
     private ClassRepository classRepository;
+
+    @Autowired
     private SchoolRepository schoolRepository;
+
+    @Autowired
     private UserRepository userRepository;
 
-    public void addClass(Class c)
+    public Class addClass(Class c) throws AlreadyAssignedException
     {
-        classRepository.save(c);
+        if(classRepository.findByNameAndSchoolId(c.getName(), c.getSchool().getId()).isPresent())
+            throw new AlreadyAssignedException();
+
+        return classRepository.save(c);
     }
 
-    private void deleteClass(Integer id)
+    public void deleteClassById(Integer id) throws NotFoundException
     {
+        Optional<Class> classOptional = classRepository.findById(id);
+        if(classOptional.isEmpty())
+            throw new NotFoundException();
 
+        Class classToDelete = classOptional.get();
+        classToDelete.getSchool().getClasses().remove(classToDelete);
+        schoolRepository.save(classToDelete.getSchool());
+
+        if(classToDelete.getTeacher() != null) {
+            classToDelete.getTeacher().setSchoolClass(null);
+            userRepository.save(classToDelete.getTeacher());
+        }
+
+        classToDelete.getStudents()
+                .forEach(student -> student.setSchoolClass(null));
+        classRepository.deleteById(id);
     }
 
     public Optional<Class> findById(Integer id) {

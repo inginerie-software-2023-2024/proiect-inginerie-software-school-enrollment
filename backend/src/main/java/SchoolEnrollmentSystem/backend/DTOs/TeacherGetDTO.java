@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 public class TeacherGetDTO {
+    private Integer id;
     private String username;
     private String firstName;
     private String lastName;
@@ -13,6 +14,7 @@ public class TeacherGetDTO {
     private String className;
 
     public TeacherGetDTO(User user) {
+        id = user.getId();
         username = user.getUsername();
         firstName = user.getFirstName();
         lastName = user.getLastName();

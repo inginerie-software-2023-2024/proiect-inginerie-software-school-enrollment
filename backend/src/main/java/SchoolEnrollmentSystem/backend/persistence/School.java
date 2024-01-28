@@ -30,23 +30,23 @@ public class School {
     @Column(name="principal_id", nullable = false, insertable = false, updatable = false)
     private Integer principalId;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "principal_id", referencedColumnName = "id")
     private User principal;
 
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "school")
     @JsonIgnore
     private Set<Request> requests = new HashSet<>();
 
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "school")
     @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
-    @OneToMany(mappedBy = "school", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "school")
     @JsonIgnore
     private Set<Class> classes = new HashSet<>();
 
-    @OneToMany(mappedBy = "schoolTeacher", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "schoolTeacher")
     @JsonIgnore
     private Set<User> teachers = new HashSet<>();
 

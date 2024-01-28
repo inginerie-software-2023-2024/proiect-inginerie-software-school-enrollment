@@ -26,15 +26,15 @@ public class Class {
     @Column(name = "max_number_of_students", nullable = false)
     private Integer maxNumberOfStudents;
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     private User teacher;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "school_id", referencedColumnName = "id")
     private School school;
 
-    @OneToMany(mappedBy = "schoolClass", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "schoolClass")
     private Set<Student> students = new HashSet<>();
 
     @Override
