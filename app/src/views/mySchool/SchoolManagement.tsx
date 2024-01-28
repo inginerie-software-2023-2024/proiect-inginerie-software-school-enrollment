@@ -4,15 +4,20 @@ import UpdateSchoolForm from "./UpdateSchoolForm"
 import InviteTeachers from "./InviteTeachers"
 import "./style.css"
 import TeachersTable from "./TeachersTable"
+import ClassesTable from "./ClassesTable"
 
 export default function SchoolManagement({
   schoolInfo,
   reRenderRoot,
   setSchoolInfo,
+  teachersData,
+  classesData,
 }: {
   schoolInfo: SchoolData
   reRenderRoot: () => void
   setSchoolInfo: (schoolInfo: SchoolData) => void
+  teachersData: Array<any>
+  classesData: Array<any>
 }) {
   return (
     <div
@@ -23,14 +28,12 @@ export default function SchoolManagement({
         marginBottom: "2em",
       }}
     >
-      <div className="two-columns">
-        <UpdateSchoolForm
-          initialSchoolInfo={schoolInfo}
-          setSchoolInfo={setSchoolInfo}
-        />
-        <InviteTeachers reRenderRoot={reRenderRoot} />
-      </div>
-      <TeachersTable />
+      <UpdateSchoolForm
+        initialSchoolInfo={schoolInfo}
+        setSchoolInfo={setSchoolInfo}
+      />
+      <TeachersTable teachersData={teachersData} reRenderRoot={reRenderRoot} />
+      <ClassesTable classesData={classesData} reRenderRoot={reRenderRoot} />
     </div>
   )
 }

@@ -55,8 +55,8 @@ export default function InviteTeachers({
   }
 
   return (
-    <Card className="padded-fit-wrapper centering-wrapper">
-      <h3 style={{ fontWeight: "bold" }}>Adaugati Profesori</h3>
+    <div className="centering-wrapper">
+      <h3 style={{ fontWeight: "bold" }}>Adaugati Profesor</h3>
       <Form fields={fields} setFormData={setTeacher} />
       <Button
         variant="contained"
@@ -69,6 +69,6 @@ export default function InviteTeachers({
       >
         Adauga Profesor
       </Button>
-    </Card>
+    </div>
   )
 }

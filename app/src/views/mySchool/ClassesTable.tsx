@@ -1,23 +1,26 @@
 import { Box, Button, Card, Modal } from "@mui/material"
-import React, { useEffect, useState } from "react"
+import React, { useState } from "react"
 import CustomTable from "../../components/table/CustomTable"
-import { fetchWithToken } from "../../tokenUtils"
-import { domainName } from "../../generalConstants"
-import InviteTeachers from "./InviteTeachers"
+import AddClassForm from "./AddClassForm"
 
-export default function TeachersTable({
-  teachersData,
+export default function ClassesTable({
+  classesData,
   reRenderRoot,
 }: {
-  teachersData: Array<any>
+  classesData: Array<any>
   reRenderRoot: () => void
 }) {
-  const [addTeacherModalState, setAddTeacherModalState] = useState(false)
+  const [addClassModalState, setAddClassModalState] = useState(false)
 
-  const closeAddTeacherModal = () => setAddTeacherModalState(false)
-  const openAddTeacherModal = () => setAddTeacherModalState(true)
+  const closeAddClassModal = () => setAddClassModalState(false)
+  const openAddClassModal = () => setAddClassModalState(true)
 
-  const tableHeaders = ["Nume", "Prenume", "Username", "Email", "Clasa"]
+  const tableHeaders = [
+    "Nume Clasa",
+    "Profesor",
+    "Numar Elevi",
+    "Numar Maxim Elevi",
+  ]
 
   const tableStyle = {
     width: "100%",
@@ -30,24 +33,23 @@ export default function TeachersTable({
 
   return (
     <Card className="padded-fit-wrapper centering-wrapper">
-      <h3 style={{ fontWeight: "bold" }}>Profesorii din Scoala Dvs.</h3>
-      {teachersData.length > 0 ? (
+      <h3 style={{ fontWeight: "bold" }}>Clasele Dvs.</h3>
+      {classesData.length > 0 ? (
         <CustomTable
           tableHeaders={tableHeaders}
-          tableData={teachersData}
+          tableData={classesData}
           tableDataOrder={[
-            "lastName",
-            "firstName",
-            "username",
-            "email",
-            "className",
+            "name",
+            "teacher",
+            "numberOfStudents",
+            "maxNumberOfStudents",
           ]}
           tableStyle={tableStyle}
           tableHeaderStyle={tableHeaderStyle}
         />
       ) : (
         <h4 style={{ fontWeight: "bold", color: "red" }}>
-          Nu aveti profesori adaugati
+          Nu aveti clase adaugate
         </h4>
       )}
       <Button
@@ -57,13 +59,13 @@ export default function TeachersTable({
           color: "black",
           marginTop: "1em",
         }}
-        onClick={openAddTeacherModal}
+        onClick={openAddClassModal}
       >
-        Adauga Profesor Nou
+        Adauga Clasa Noua
       </Button>
       <Modal
-        open={addTeacherModalState}
-        onClose={closeAddTeacherModal}
+        open={addClassModalState}
+        onClose={closeAddClassModal}
         aria-labelledby="modal-modal-title"
         aria-describedby="modal-modal-description"
       >
@@ -81,7 +83,7 @@ export default function TeachersTable({
           }}
           className="centering-wrapper"
         >
-          <InviteTeachers reRenderRoot={reRenderRoot} />
+          <AddClassForm reRenderRoot={reRenderRoot} />
         </Box>
       </Modal>
     </Card>

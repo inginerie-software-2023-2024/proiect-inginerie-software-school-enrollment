@@ -208,14 +208,14 @@ public class SchoolController {
             schoolService.addClass(c);
         }
         catch(AlreadyAssignedException e) {
-            return new ResponseEntity<>("Class already assigned!", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Deja aveti o clasa cu numele acesta", HttpStatus.CONFLICT);
         }
         catch (Exception e) {
             System.out.println(e.getMessage());
             return ResponseEntity.internalServerError().body("Something went wrong!");
         }
 
-        return ResponseEntity.ok("Class added");
+        return ResponseEntity.ok("Clasa adaugata cu succes");
     }
 
     @PostMapping(path = "/addTeacherToClass")
