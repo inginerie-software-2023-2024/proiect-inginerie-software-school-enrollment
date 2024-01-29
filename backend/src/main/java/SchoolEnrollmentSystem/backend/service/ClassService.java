@@ -6,7 +6,6 @@ import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
 import SchoolEnrollmentSystem.backend.persistence.Class;
-import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import SchoolEnrollmentSystem.backend.repository.UserRepository;
 import lombok.AllArgsConstructor;
@@ -27,6 +26,9 @@ public class ClassService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private UserService userService;
 
     public Class addClass(Class c) throws AlreadyAssignedException
     {
@@ -114,6 +116,20 @@ public class ClassService {
 
         classToUpdate.setTeacher(null);
         classRepository.save(classToUpdate);
+    }
+
+    public ClassDTO getClassDetailsByTeacherUsername(String teacherUsername) throws NotFoundException {
+        User teacher = userService.findByUsername(teacherUsername);
+        if(teacher == null)
+            throw new NotFoundException();
+
+        if(teacher.getSchoolClass() == null)
+            throw new NotFoundException();
+
+        ClassDTO classDTO = new ClassDTO();
+        classDTO.setName(teacher.getSchoolClass().getName());
+        classDTO.setMaxNumberOfStudents(teacher.getSchoolClass().getMaxNumberOfStudents());
+        return classDTO;
     }
 }
 

@@ -164,7 +164,7 @@ export const TeacherStudentsTable = () => {
   return (
     <>
       <h3 style={{textAlign: "center"}}>
-        {teacherStudents.length} Elevi
+        ({teacherStudents.length} Elevi)
       </h3>
       <TableContainer component={Paper} style={{ padding: "50px" }}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">

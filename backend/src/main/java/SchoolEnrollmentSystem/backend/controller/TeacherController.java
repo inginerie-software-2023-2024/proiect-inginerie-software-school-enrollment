@@ -1,10 +1,11 @@
 package SchoolEnrollmentSystem.backend.controller;
 
+import SchoolEnrollmentSystem.backend.DTOs.ClassDTO;
 import SchoolEnrollmentSystem.backend.DTOs.SendStudentDTO;
-import SchoolEnrollmentSystem.backend.DTOs.SentPrincipalsDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
+import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.Student;
-import SchoolEnrollmentSystem.backend.persistence.User;
+import SchoolEnrollmentSystem.backend.service.ClassService;
 import SchoolEnrollmentSystem.backend.service.StudentService;
 import io.jsonwebtoken.Claims;
 import lombok.AllArgsConstructor;
@@ -26,6 +27,9 @@ public class TeacherController {
 
     @Autowired
     private StudentService studentService;
+
+    @Autowired
+    private ClassService classService;
 
     @GetMapping(path = "/getMyClassStudents")
     public ResponseEntity<?> getMyClassStudents(@RequestHeader("Authorization") String token) {
@@ -63,4 +67,27 @@ public class TeacherController {
 
         return ResponseEntity.ok(students);
     }
+
+    @GetMapping(path = "/getMyClassDetails")
+    public ResponseEntity<?> getMyClassDetails(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims teacherClaim = jwtUtil.resolveClaims(token);
+        Boolean isTeacher = teacherClaim.get("teacher", Boolean.class);
+        if(isTeacher == null || !isTeacher)
+            return ResponseEntity.badRequest().body("Unauthorized");
+
+        String teacherUsername = teacherClaim.getSubject();
+        try {
+            ClassDTO classDTO = classService.getClassDetailsByTeacherUsername(teacherUsername);
+            return ResponseEntity.ok(classDTO);
+        }
+        catch(NotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
+        catch(Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
 }
