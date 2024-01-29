@@ -40,6 +40,12 @@ public class SchoolController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @GetMapping
+    @ResponseStatus(HttpStatus.OK)
+    public List<School> getAllSchools() {
+        return schoolService.getAllSchools();
+    }
+
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> getSchoolWithId(@PathVariable Integer id) {
