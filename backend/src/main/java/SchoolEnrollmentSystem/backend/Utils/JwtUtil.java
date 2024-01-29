@@ -6,7 +6,9 @@ import SchoolEnrollmentSystem.backend.service.AdminService;
 import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -19,10 +21,11 @@ import java.util.concurrent.TimeUnit;
 public class JwtUtil {
     @Autowired
     private AdminService adminService;
-    private final String secret_key = "cheiesecreta";
+
+    private String secretKey = System.getenv("IS_JWT_SECRET_KEY");
     private long accessTokenValidity = 60*60*1000;
 
-    private final JwtParser jwtParser = Jwts.parser().setSigningKey(secret_key);
+    private final JwtParser jwtParser = Jwts.parser().setSigningKey(secretKey);
     private final String TOKEN_HEADER = "Authorization";
     private final String TOKEN_PREFIX = "Bearer ";
 
@@ -45,7 +48,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
-                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
@@ -56,7 +59,7 @@ public class JwtUtil {
         return Jwts.builder()
                 .setClaims(claims)
                 .setExpiration(tokenValidity)
-                .signWith(SignatureAlgorithm.HS256, secret_key)
+                .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
 
