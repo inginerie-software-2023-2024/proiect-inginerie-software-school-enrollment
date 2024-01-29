@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.service;
 
+import SchoolEnrollmentSystem.backend.DTOs.ClassDTO;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -65,6 +66,17 @@ public class ClassService {
 
     public Optional<Class> getClassesByTeacherId(Integer teacherId) {
         return classRepository.findTopByTeacherId(teacherId);
+    }
+
+    public void updateClassDetails(Integer classId, ClassDTO classDTO) {
+        Optional<Class> classOptional = classRepository.findById(classId);
+        if(classOptional.isEmpty())
+            throw new NotFoundException();
+
+        Class classToUpdate = classOptional.get();
+        classToUpdate.setName(classDTO.getName());
+        classToUpdate.setMaxNumberOfStudents(classDTO.getMaxNumberOfStudents());
+        classRepository.save(classToUpdate);
     }
 }
 

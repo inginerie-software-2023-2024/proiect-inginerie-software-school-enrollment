@@ -5,18 +5,26 @@ import AddClassForm from "./AddClassForm"
 import { domainName } from "../../generalConstants"
 import { fetchWithToken } from "../../tokenUtils"
 import { toast } from "sonner"
+import ClassDetails from "./ClassDetails"
 
 export default function ClassesTable({
   classesData,
+  teachersData,
   reRenderRoot,
 }: {
   classesData: Array<any>
   reRenderRoot: () => void
+  teachersData: Array<any>
 }) {
   const [addClassModalState, setAddClassModalState] = useState(false)
+  const [classDetailsModalState, setClassDetailsModalState] = useState(false)
+  const [selectedClassInfo, setSelectedClassInfo] = useState(null)
 
   const closeAddClassModal = () => setAddClassModalState(false)
   const openAddClassModal = () => setAddClassModalState(true)
+
+  const closeClassDetailsModal = () => setClassDetailsModalState(false)
+  const openClassDetailsModal = () => setClassDetailsModalState(true)
 
   const tableHeaders = [
     "Nume Clasa",
@@ -95,6 +103,9 @@ export default function ClassesTable({
           ]}
           tableStyle={tableStyle}
           tableHeaderStyle={tableHeaderStyle}
+          rowClickFunction={(data) => {
+            setSelectedClassInfo(data), openClassDetailsModal()
+          }}
         />
       ) : (
         <h4 style={{ fontWeight: "bold", color: "red" }}>
@@ -133,6 +144,33 @@ export default function ClassesTable({
           className="centering-wrapper"
         >
           <AddClassForm reRenderRoot={reRenderRoot} />
+        </Box>
+      </Modal>
+      <Modal
+        open={classDetailsModalState}
+        onClose={closeClassDetailsModal}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: "fit-content",
+            bgcolor: "background.paper",
+            border: "2px solid #000",
+            boxShadow: 24,
+            p: 4,
+          }}
+          className="centering-wrapper"
+        >
+          <ClassDetails
+            selectedClassInfo={selectedClassInfo}
+            teachersData={teachersData}
+            reRenderRoot={reRenderRoot}
+          />
         </Box>
       </Modal>
     </Card>

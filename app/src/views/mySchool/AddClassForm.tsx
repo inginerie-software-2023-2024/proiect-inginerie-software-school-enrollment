@@ -36,7 +36,7 @@ export default function AddClassForm({
       name: "maxNumberOfStudents",
       id: "class-max-number-of-students-add",
       label: "Numarul maxim de elevi",
-      type: "text",
+      type: "number",
       required: true,
     },
   ]
@@ -101,7 +101,11 @@ export default function AddClassForm({
   return (
     <div className="centering-wrapper">
       <h3 style={{ fontWeight: "bold" }}>Adaugati Clasa</h3>
-      <Form fields={fields} setFormData={setClassDetails} />
+      <Form
+        fields={fields}
+        setFormData={setClassDetails}
+        intFields={["maxNumberOfStudents"]}
+      />
       <Button
         variant="contained"
         style={{

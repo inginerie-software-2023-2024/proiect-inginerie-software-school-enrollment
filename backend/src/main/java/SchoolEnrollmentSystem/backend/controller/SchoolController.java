@@ -40,12 +40,6 @@ public class SchoolController {
     @Autowired
     private JwtUtil jwtUtil;
 
-    @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<School> getAllSchools() {
-        return schoolService.getAllSchools();
-    }
-
     @GetMapping(path = "/{id}")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<?> getSchoolWithId(@PathVariable Integer id) {
@@ -54,12 +48,6 @@ public class SchoolController {
             return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok(schoolOptional.get());
-    }
-
-    @DeleteMapping(path = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public void deleteSchool(@PathVariable Integer id) {
-        schoolService.deleteSchool(id);
     }
 
     @PostMapping(path = "/addSchool")
@@ -129,7 +117,6 @@ public class SchoolController {
         if(schoolOptional.isEmpty())
             return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
 
-        System.out.println("ID-ul scolii din request: " + schoolOptional.get().getId());
         return ResponseEntity.ok(schoolOptional.get().getTeachers().stream().map(TeacherGetDTO::new).toList());
     }
 
@@ -409,5 +396,39 @@ public class SchoolController {
         List<Class> classes = classService.getClassesBySchoolId(school.getId());
 
         return ResponseEntity.ok(classes);
+    }
+
+    @PutMapping(path = "/updateClassDetails/{classId}")
+    public ResponseEntity<?> updateClassDetails(
+            @RequestHeader("Authorization") String token,
+            @PathVariable Integer classId,
+            @RequestBody ClassDTO classDTO
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Directorul nu are nici o scoala adaugata", HttpStatus.NOT_FOUND);
+
+        if(!schoolService.isClassInSchool(classId, schoolOptional.get()))
+            return new ResponseEntity<>("Clasa nu este a scolii dumneavoastra", HttpStatus.BAD_REQUEST);
+
+        try {
+            classService.updateClassDetails(classId, classDTO);
+        }
+        catch(NotFoundException e) {
+            return new ResponseEntity<>("Clasa nu a fost gasita", HttpStatus.NOT_FOUND);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>("Eroare la actualizarea clasei", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return ResponseEntity.ok("Clasa actualizata cu succes");
     }
 }

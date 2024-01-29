@@ -33,7 +33,11 @@ export default function SchoolManagement({
         setSchoolInfo={setSchoolInfo}
       />
       <TeachersTable teachersData={teachersData} reRenderRoot={reRenderRoot} />
-      <ClassesTable classesData={classesData} reRenderRoot={reRenderRoot} />
+      <ClassesTable
+        classesData={classesData}
+        reRenderRoot={reRenderRoot}
+        teachersData={teachersData}
+      />
     </div>
   )
 }

@@ -101,9 +101,13 @@ public class SchoolService {
     }
 
     public void removeClassFromSchool(Integer classId, School school) throws ResourcesNotCorrelatedException {
-        if(school.getClasses().stream().noneMatch(c -> c.getId().equals(classId)))
+        if(!isClassInSchool(classId, school))
             throw new ResourcesNotCorrelatedException();
 
         classService.deleteClassById(classId);
+    }
+
+    public boolean isClassInSchool(Integer classId, School school) {
+        return school.getClasses().stream().anyMatch(c -> c.getId().equals(classId));
     }
 }

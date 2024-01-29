@@ -69,9 +69,10 @@ export default function MySchool() {
           const processedData = rawData.map((classData: any) => {
             return {
               ...classData,
+              teacherId: classData.teacher !== null ? classData.teacher.id : 0,
               teacher:
                 classData.teacher !== null
-                  ? `${classData.teacher.firstName} ${classData.teacher.lastName}`
+                  ? `${classData.teacher.firstName} ${classData.teacher.lastName} (${classData.teacher.username})`
                   : "N/A",
               numberOfStudents: classData.students.length,
             }
