@@ -1,9 +1,12 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
 import { combineReducers } from "redux"
 import { userReducer } from "./reducers"
+import { schoolReducer, schoolsReducer } from "./reducers/schools"
 
 const reducer = combineReducers({
   user: userReducer,
+  school: schoolReducer,
+  schools: schoolsReducer,
 })
 
 export const store = configureStore({
