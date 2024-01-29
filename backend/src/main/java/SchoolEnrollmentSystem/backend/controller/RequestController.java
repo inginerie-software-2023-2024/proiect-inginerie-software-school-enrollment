@@ -4,6 +4,7 @@ import SchoolEnrollmentSystem.backend.DTOs.GetRequestDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RequestDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
 import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
 import SchoolEnrollmentSystem.backend.persistence.School;
@@ -158,25 +159,27 @@ public class RequestController {
         Integer grade = requestDTO.getGrade();
 
         if(isParent == null || !isParent)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return ResponseEntity.badRequest().body("Neautorizat");
 
         Optional<Student> studentOptional = studentService.findById(studentId);
         if(studentOptional.isEmpty())
-            return new ResponseEntity<>("Student not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Studentul nu a fost gasit", HttpStatus.NOT_FOUND);
 
         Optional<School> schoolOptional = schoolService.getSchoolById(schoolId);
         if(schoolOptional.isEmpty())
-            return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Scoala nu a fost gasita", HttpStatus.NOT_FOUND);
 
         try {
             requestService.addRequest(studentOptional.get(), schoolOptional.get(), grade);
-
+        }
+        catch (AlreadyAssignedException e) {
+            return ResponseEntity.badRequest().body("Studentul este deja asignat la o scoala");
         }
         catch (NullArgumentException e) {
-            return ResponseEntity.internalServerError().build();
+            return new ResponseEntity<>("Eroare la adaugarea cererii", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         catch(UniqueResourceExistent e) {
-            return ResponseEntity.badRequest().body("Request already exists");
+            return ResponseEntity.badRequest().body("Deja exista o cerere pentru acest copil la aceasta scoala");
         }
 
         return ResponseEntity.ok().build();

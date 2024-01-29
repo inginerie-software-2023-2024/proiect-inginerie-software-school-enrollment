@@ -26,6 +26,7 @@ import {ReactReduxContext} from 'react-redux'
 import axios from 'axios'
 import { domainName } from "../../generalConstants"
 import { useNavigate } from "react-router-dom"
+import { getCurrentUserRole } from "../../tokenUtils"
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -127,124 +128,6 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
     </Box>
   )
 }
-
-// const schools = [
-//   {
-//     name: "Scoala 1",
-//     director: "Director 1",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 2",
-//     director: "Director 2",
-//     points: 200,
-//   },
-//   {
-//     name: "Scoala 3",
-//     director: "Director 3",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 4",
-//     director: "Director 4",
-//     points: 150,
-//   },
-//   {
-//     name: "Scoala 5",
-//     director: "Director 5",
-//     points: 50,
-//   },
-//   {
-//     name: "Scoala 6",
-//     director: "Director 6",
-//     points: 250,
-//   },
-//   {
-//     name: "Scoala 7",
-//     director: "Director 7",
-//     points: 300,
-//   },
-//   {
-//     name: "Scoala 8",
-//     director: "Director 8",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 9",
-//     director: "Director 9",
-//     points: 200,
-//   },
-//   {
-//     name: "Scoala 10",
-//     director: "Director 10",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 11",
-//     director: "Director 11",
-//     points: 150,
-//   },
-//   {
-//     name: "Scoala 12",
-//     director: "Director 12",
-//     points: 50,
-//   },
-//   {
-//     name: "Scoala 13",
-//     director: "Director 13",
-//     points: 250,
-//   },
-//   {
-//     name: "Scoala 14",
-//     director: "Director 14",
-//     points: 300,
-//   },
-//   {
-//     name: "Scoala 15",
-//     director: "Director 15",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 16",
-//     director: "Director 16",
-//     points: 200,
-//   },
-//   {
-//     name: "Scoala 17",
-//     director: "Director 17",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 18",
-//     director: "Director 18",
-//     points: 150,
-//   },
-//   {
-//     name: "Scoala 19",
-//     director: "Director 19",
-//     points: 50,
-//   },
-//   {
-//     name: "Scoala 20",
-//     director: "Director 20",
-//     points: 250,
-//   },
-//   {
-//     name: "Scoala 21",
-//     director: "Director 21",
-//     points: 300,
-//   },
-//   {
-//     name: "Scoala 22",
-//     director: "Director 22",
-//     points: 100,
-//   },
-//   {
-//     name: "Scoala 23",
-//     director: "Director 23",
-//     points: 200,
-//   },
-// ].sort((a, b) => (a.points > b.points ? -1 : 1))
 
 export const SchoolsTable = () => {
   const [page, setPage] = React.useState(0)

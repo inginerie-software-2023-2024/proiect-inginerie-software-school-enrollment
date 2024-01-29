@@ -1,6 +1,7 @@
 package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
 import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
 import SchoolEnrollmentSystem.backend.persistence.Request;
@@ -60,7 +61,8 @@ public class RequestService {
         return school.getRequests().stream().toList();
     }
 
-    public void addRequest(Student student, School school, Integer grade) throws NullArgumentException, UniqueResourceExistent{
+    public void addRequest(Student student, School school, Integer grade)
+            throws NullArgumentException, UniqueResourceExistent ,AlreadyAssignedException {
         if(student == null || school == null)
             throw new NullArgumentException();
 
@@ -68,6 +70,10 @@ public class RequestService {
         request.setStudent(student);
         request.setSchool(school);
         request.setGrade(grade);
+
+        // if the student is already assigned to a school, don't add the request
+        if(student.getSchool() != null)
+            throw new AlreadyAssignedException();
 
         // if there is already a request from the same student to the same school, don't add it
         long numberExistent = requestRepository.findAll().stream()

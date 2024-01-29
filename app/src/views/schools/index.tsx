@@ -7,8 +7,17 @@ import "bootstrap/dist/css/bootstrap.min.css"
 export const Schools = () => {
   return (
     <>
-      <h1 style={{ textAlign: "center" }}>Scoli</h1>
-      <SearchSchools />
+      <h1
+        style={{
+          textAlign: "center",
+          fontWeight: "bold",
+          display: "block",
+          margin: "0.5em 0 0.5em 0",
+        }}
+      >
+        Scoli
+      </h1>
+      {/* <SearchSchools /> */}
       <StyledEngineProvider injectFirst>
         <SchoolsTable />
       </StyledEngineProvider>
