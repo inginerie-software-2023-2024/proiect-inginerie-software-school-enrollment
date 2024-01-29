@@ -1,5 +1,6 @@
 import React from "react"
 import EditClassDetails from "./EditClassDetails"
+import ChangeTeacher from "./ChangeTeacher"
 
 export default function ClassDetails({
   selectedClassInfo,
@@ -12,10 +13,18 @@ export default function ClassDetails({
 }) {
   return (
     <div className="two-columns-child-details">
-      <EditClassDetails
-        classDetails={selectedClassInfo}
-        reRenderRoot={reRenderRoot}
-      />
+      <div className="centering-wrapper" style={{ gap: "1em" }}>
+        <EditClassDetails
+          classDetails={selectedClassInfo}
+          reRenderRoot={reRenderRoot}
+        />
+        <ChangeTeacher
+          currentTeacherId={selectedClassInfo.teacherId}
+          reRenderRoot={reRenderRoot}
+          teachersData={teachersData}
+          classId={selectedClassInfo.id}
+        />
+      </div>
     </div>
   )
 }

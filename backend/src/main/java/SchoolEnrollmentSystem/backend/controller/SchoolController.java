@@ -322,63 +322,63 @@ public class SchoolController {
         return ResponseEntity.ok("Teacher added to class");
     }
 
-    @PostMapping(path = "/changeClassTeacher")
+    @PutMapping(path = "/changeClassTeacher")
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> changeClassTeacher(@RequestHeader("Authorization") String token, @RequestBody AddTeacherToClassDTO addTeacherToClassDTO) {
+    public ResponseEntity<?> changeClassTeacher(
+            @RequestHeader("Authorization") String token,
+            @RequestBody AddTeacherToClassDTO addTeacherToClassDTO
+    ) {
         Claims principalClaim = jwtUtil.resolveClaims(token);
         Boolean isPrincipal = principalClaim.get("principal", Boolean.class);
 
         if(isPrincipal == null || !isPrincipal)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return ResponseEntity.badRequest().body("Neautorizat");
 
         String principalUsername = principalClaim.getSubject();
 
         Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
 
         if(schoolOptional.isEmpty())
-            return new ResponseEntity<>("Principal has no school assigned!", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Nu aveti nici o scoala adaugata", HttpStatus.NOT_FOUND);
 
         School school = schoolOptional.get();
 
-        List<Class> classes = classService.getClassesBySchoolId(school.getId());
+        if(!schoolService.isClassInSchool(addTeacherToClassDTO.getClassId(), school))
+            return new ResponseEntity<>("Clasa nu apartine scolii dvs", HttpStatus.BAD_REQUEST);
 
-        Class cls = classes.stream().filter(c -> c.getId().equals(addTeacherToClassDTO.getClassId())).findFirst().orElse(null);
+        User teacherToAdd = userService.getUserById(addTeacherToClassDTO.getTeacherId());
 
-        if (cls == null)
-            return new ResponseEntity<>("Class not found!", HttpStatus.NOT_FOUND);
+        if(addTeacherToClassDTO.getTeacherId() == 0) {
+            try {
+                classService.removeTeacherFromClass(addTeacherToClassDTO.getClassId());
+            }
+            catch(NotFoundException e) {
+                return new ResponseEntity<>("Clasa nu a fost gasita", HttpStatus.NOT_FOUND);
+            }
+            catch(Exception e) {
+                return new ResponseEntity<>("Eroare la eliminarea profesorului", HttpStatus.INTERNAL_SERVER_ERROR);
+            }
 
-        User teacher = userService.getUserById(addTeacherToClassDTO.getTeacherId());
-
-        if (teacher == null)
-            return new ResponseEntity<>("Teacher not found!", HttpStatus.NOT_FOUND);
-
-        if (!teacher.isTeacher())
-            return new ResponseEntity<>("User is not a teacher!", HttpStatus.BAD_REQUEST);
-
-        Optional<Class> classOptional = classService.getClassesByTeacherId(addTeacherToClassDTO.getTeacherId());
-
-        if (classOptional.isPresent()) {
-            /// swap teachers
-            Class otherClass = classOptional.get();
-            User clsTeacher = cls.getTeacher();
-            cls.setTeacher(null);
-            classService.addClass(cls);
-            otherClass.setTeacher(clsTeacher);
-            cls.setTeacher(teacher);
-
-            classService.addClass(otherClass);
-            classService.addClass(cls);
-
-            return new ResponseEntity<>("Both teaches has assigned classes, so we swap!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Profesor eliminat cu succes", HttpStatus.OK);
         }
 
-        if(cls.getSchool().getId().equals(teacher.getSchoolTeacher().getId()))
-            return new ResponseEntity<>("Teacher is not from the same school as the class!", HttpStatus.BAD_REQUEST);
+        if (teacherToAdd == null && addTeacherToClassDTO.getTeacherId() != 0)
+            return new ResponseEntity<>("Utilizatorul nu a fost gasit", HttpStatus.NOT_FOUND);
 
-        cls.setTeacher(teacher);
-        classService.addClass(cls);
+        if (addTeacherToClassDTO.getTeacherId() != 0 && !teacherToAdd.isTeacher())
+            return new ResponseEntity<>("Utilizatorul nu este profesor", HttpStatus.BAD_REQUEST);
 
-        return ResponseEntity.ok("Teacher added to class");
+        try {
+            classService.changeClassTeacher(addTeacherToClassDTO.getClassId(), teacherToAdd);
+        }
+        catch(NotFoundException e) {
+            return new ResponseEntity<>("Clasa nu a fost gasita", HttpStatus.NOT_FOUND);
+        }
+        catch(Exception e) {
+            return new ResponseEntity<>("Eroare la adaugarea profesorului", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        return ResponseEntity.ok("Profesor modificat cu succes");
     }
 
     @GetMapping(path = "/getClasses")

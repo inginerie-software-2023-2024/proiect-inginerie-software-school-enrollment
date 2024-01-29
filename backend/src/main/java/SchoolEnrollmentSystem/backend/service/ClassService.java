@@ -78,5 +78,42 @@ public class ClassService {
         classToUpdate.setMaxNumberOfStudents(classDTO.getMaxNumberOfStudents());
         classRepository.save(classToUpdate);
     }
+
+    public void changeClassTeacher(Integer classId, User teacherToAdd) {
+        Optional<Class> classOptional = classRepository.findById(classId);
+        if(classOptional.isEmpty())
+            throw new NotFoundException();
+
+        Class classToUpdate = classOptional.get();
+        if(classToUpdate.getTeacher() != null) {
+            classToUpdate.getTeacher().setSchoolClass(null);
+            userRepository.save(classToUpdate.getTeacher());
+        }
+
+        if(teacherToAdd.getSchoolClass() != null) {
+            teacherToAdd.getSchoolClass().setTeacher(null);
+            classRepository.save(teacherToAdd.getSchoolClass());
+        }
+
+        classToUpdate.setTeacher(teacherToAdd);
+        teacherToAdd.setSchoolClass(classToUpdate);
+        userRepository.save(teacherToAdd);
+        classRepository.save(classToUpdate);
+    }
+
+    public void removeTeacherFromClass(Integer classId) {
+        Optional<Class> classOptional = classRepository.findById(classId);
+        if(classOptional.isEmpty())
+            throw new NotFoundException();
+
+        Class classToUpdate = classOptional.get();
+        if(classToUpdate.getTeacher() != null) {
+            classToUpdate.getTeacher().setSchoolClass(null);
+            userRepository.save(classToUpdate.getTeacher());
+        }
+
+        classToUpdate.setTeacher(null);
+        classRepository.save(classToUpdate);
+    }
 }
 

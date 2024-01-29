@@ -84,7 +84,8 @@ export default function ClassesTable({
                     color: "black",
                     marginTop: "1em",
                   }}
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation()
                     removeClass(classData.id)
                   }}
                   title="Stergerea clasei va elimina profesorul si elevii din clasa respectiva"
