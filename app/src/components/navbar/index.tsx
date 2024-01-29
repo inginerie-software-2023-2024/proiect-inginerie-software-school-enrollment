@@ -1,8 +1,10 @@
 import "bootstrap/dist/css/bootstrap.min.css"
-import React from "react"
+import React, { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import "../../style.css"
 import { getCurrentUserRole } from "../../tokenUtils"
+import { login } from "../../app/reducers"
+import {ReactReduxContext} from 'react-redux'
 
 export const NavBar = () => {
   const guestPagesLeft = [
@@ -45,6 +47,12 @@ export const NavBar = () => {
         getCurrentUserRole() === "parent",
     },
   ]
+
+  const {store} = useContext(ReactReduxContext)
+  if(localStorage.getItem("username")) {
+    store.dispatch(login(localStorage.getItem("username")))
+  }
+
   const guestPagesRightNotLoggedIn = [
     {
       name: "Sign Up",
