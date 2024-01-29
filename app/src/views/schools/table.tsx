@@ -173,9 +173,9 @@ export const SchoolsTable = () => {
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <StyledTableRow>
+            <StyledTableCell>Nr. crt</StyledTableCell>
             <StyledTableCell>School</StyledTableCell>
             <StyledTableCell align="right">Director</StyledTableCell>
-            <StyledTableCell align="right">Points</StyledTableCell>
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -185,20 +185,20 @@ export const SchoolsTable = () => {
                 page * rowsPerPage + rowsPerPage,
               )
             : schools
-          ).map((school: any) => {
-            const { name, director, points } = school
+          ).map((school: any, index: number) => {
+            const { name, principal } = school
             return (
               <StyledTableRow key={name}>
+                <TableCell style={{ width: 160 }} align="left">
+                  {index}
+                </TableCell>
                 <TableCell component="th" scope="row">
                   <Button onClick={() => handleSchoolClick(school)}>
                     {name}
                   </Button>
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                  {director}
-                </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
-                  {points}
+                  {`${principal.lastName} ${principal.firstName} (${principal.username})`}
                 </TableCell>
               </StyledTableRow>
             )
