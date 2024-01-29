@@ -16,7 +16,11 @@
   background-color: transparent;
   border: none;
   padding: 10px;
+  padding-left: 20px;
   cursor: pointer;
   outline: none;
   -webkit-tap-highlight-color: transparent;
+  font-family:'Courier New', Courier, monospace;
+  font-weight: bold;
+  font-size: 18px;
 }

@@ -1,12 +1,16 @@
+import { teacherStudentsReducer } from './reducers/students';
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit"
 import { combineReducers } from "redux"
 import { userReducer } from "./reducers"
 import { schoolReducer, schoolsReducer } from "./reducers/schools"
+import { allUsersReducer } from "./reducers/allUsers"
 
 const reducer = combineReducers({
   user: userReducer,
   school: schoolReducer,
   schools: schoolsReducer,
+  allUsers: allUsersReducer,
+  teacherStudents: teacherStudentsReducer,
 })
 
 export const store = configureStore({

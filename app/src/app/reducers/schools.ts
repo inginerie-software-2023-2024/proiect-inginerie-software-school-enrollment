@@ -18,9 +18,14 @@ const schoolSlice = createSlice({
 })
 
 const getAllSchools = async () => {
-  const {data} = await axios.get(`${domainName}/schools`)
-  console.log('initState getSchools response: ', data)
-  return data;
+  try{
+    const {data} = await axios.get(`${domainName}/schools`)
+    console.log('initState getSchools response: ', data)
+    return data;
+  } catch (e) {
+    console.log('initState getSchools error: ', e)
+    return [];
+  }
 }
 
 // const getAllSchools = createAsyncThunk("schools/getAllSchools", async () => {

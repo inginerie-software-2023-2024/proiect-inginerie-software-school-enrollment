@@ -13,6 +13,7 @@ import { Toaster } from "sonner"
 import ChildrenManagement from "./views/childrenManagement/ChildrenManagement"
 import MySchool from "./views/mySchool/MySchool"
 import { SchoolDetails } from "./views/schools/SchoolDetails"
+import MyClass from "./views/myClass/MyClass"
 
 function App() {
   return (
@@ -31,7 +32,7 @@ function App() {
           <Route path={"/admin"} element={<AdminDashBoard />} />
           <Route path={"/my-school"} element={<MySchool />} />
           <Route path={"/my-children"} element={<ChildrenManagement />} />
-          {/* <Route path={"/clasa-mea"} element={<AdminDashBoard />} /> */}
+          <Route path={"/my-class"} element={<MyClass />} />
           <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>
