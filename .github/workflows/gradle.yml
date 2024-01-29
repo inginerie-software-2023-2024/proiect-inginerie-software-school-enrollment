@@ -10,6 +10,9 @@ on:
   push:
     branches:
       - controller_repository
+env:
+      IS_DB_PASSWORD: ${{ secrets.IS_DB_PASSWORD }}
+      IS_JWT_SECRET_KEY: ${{ secrets.IS_JWT_SECRET_KEY }}
 permissions:
   contents: read
 jobs:
