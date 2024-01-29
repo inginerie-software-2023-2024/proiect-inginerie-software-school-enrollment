@@ -10,7 +10,7 @@
 
 .two-columns-child-details {
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1fr 10fr;
   grid-gap: 1rem;
   place-items: center;
 }

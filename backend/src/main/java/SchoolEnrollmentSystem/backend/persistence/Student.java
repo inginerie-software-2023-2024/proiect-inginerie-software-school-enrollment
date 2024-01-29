@@ -24,7 +24,7 @@ public class Student {
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     private User parent;
 
     @Column(name = "first_name", nullable = false)

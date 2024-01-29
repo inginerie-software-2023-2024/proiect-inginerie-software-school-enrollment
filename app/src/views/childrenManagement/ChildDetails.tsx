@@ -7,6 +7,7 @@ import { fetchWithToken } from "../../tokenUtils"
 import { toast } from "sonner"
 import Form from "../../components/form/Form"
 import CustomTable from "../../components/table/CustomTable"
+import { SchoolRequestStatus } from "../../types/SchoolRequestStatus"
 
 export default function ChildDetails({
   closeModal,
@@ -22,6 +23,7 @@ export default function ChildDetails({
   const [editMode, setEditMode] = useState(false)
   const [childData, setChildData] = useState({ ...childInfo })
   const [requestsData, setRequestsData] = useState<SchoolRequestData[]>([])
+  const [tableRequestsData, setTableRequestsData] = useState<any[]>([])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -30,7 +32,11 @@ export default function ChildDetails({
           domainName + `/requests/ofStudent/${childData.id}`,
         )
         const rawData = await response.json()
-        setRequestsData(rawData)
+        if (Array.isArray(rawData)) {
+          setRequestsData(rawData)
+        } else {
+          console.log("Error: rawData is not an array")
+        }
       } catch (error) {
         console.log(error)
       }
@@ -38,17 +44,96 @@ export default function ChildDetails({
     fetchData()
   }, [])
 
-  let tableRequestsData = []
+  const changeRequestStatus = async (
+    requestId: number,
+    status: SchoolRequestStatus,
+  ) => {
+    try {
+      const requestOptions = {
+        method: "PUT",
+      }
+      const response = await fetchWithToken(
+        `${domainName}/requests/changeStatus/${requestId}/${status}`,
+        requestOptions,
+      )
+      if (response.ok) {
+        toast.success("Statusul cererii a fost modificat cu succes")
+        reRenderParent()
+      } else {
+        const responseMessage = await response.text()
+        toast.error(responseMessage)
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
-    tableRequestsData = requestsData.map((request) => {
-      return {
-        school: request.school.name,
-        grade: request.grade,
-        status: request.status,
-        id: request.id,
-      }
-    })
+    setTableRequestsData(
+      requestsData.map((request) => {
+        return {
+          school: request.school.name,
+          grade: request.grade,
+          status: request.status,
+          id: request.id,
+          actions: [
+            <div
+              key={request.id}
+              style={{
+                display: "flex",
+                gap: "0.5em",
+                width: "100%",
+                justifyContent: "flex-end",
+              }}
+            >
+              {request.status === "SENT" ? (
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#fc6a62",
+                    color: "black",
+                    fontSize: 10,
+                  }}
+                  size="small"
+                  onClick={() => changeRequestStatus(request.id, "CANCELED")}
+                >
+                  Anuleaza
+                </Button>
+              ) : null}
+              {request.status === "ACCEPTED" ? (
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#93fc83",
+                    color: "black",
+                    fontSize: 10,
+                  }}
+                  size="small"
+                  onClick={() => changeRequestStatus(request.id, "CONFIRMED")}
+                >
+                  Confirma
+                </Button>
+              ) : null}
+              {request.status === "ACCEPTED" ? (
+                <Button
+                  variant="contained"
+                  style={{
+                    backgroundColor: "#fc6a62",
+                    color: "black",
+                    fontSize: 10,
+                  }}
+                  size="small"
+                  onClick={() => changeRequestStatus(request.id, "DECLINED")}
+                >
+                  Refuza
+                </Button>
+              ) : null}
+            </div>,
+          ],
+        }
+      }),
+    )
+    console.log("TableRequestsData: ", tableRequestsData)
   }, [requestsData])
 
   const handleSave = () => {
@@ -234,16 +319,17 @@ export default function ChildDetails({
           ) : null}
         </div>
       </div>
-      <div style={{ width: "fit-content", maxWidth: "30vw" }}>
+      <div style={{ width: "fit-content" }}>
         <h2 style={{ textAlign: "center", fontWeight: "bold" }}>
           Cererile pentru Copil
         </h2>
         {requestsData.length > 0 ? (
           childData.school == null ? (
-            <CustomTable //! TODO: test if this works after request system is fully implemented.
-              tableHeaders={["Scoala", "Clasa", "Status", "Actiune"]}
+            <CustomTable
+              tableHeaders={["Scoala", "Clasa", "Status", "Actiuni"]}
               tableData={tableRequestsData}
-              tableDataOrder={["school", "grade", "status", "id"]}
+              tableDataOrder={["school", "grade", "status", "actions"]}
+              tableStyle={{ maxHeight: "40vh", overflowY: "scroll" }}
             />
           ) : (
             <h3

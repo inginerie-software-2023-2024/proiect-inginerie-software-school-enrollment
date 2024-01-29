@@ -201,31 +201,31 @@ public class RequestController {
         boolean isParent = isTempParent != null && isTempParent;
 
         if(!isPrincipal && !isAdmin && !isParent)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         RequestStatus requestStatus;
         try {
             requestStatus = RequestStatus.valueOf(status.toUpperCase());
         }
         catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid status");
+            return new ResponseEntity<>("Status invalid", HttpStatus.BAD_REQUEST);
         }
 
         if(isParent &&
                 (requestStatus == RequestStatus.ACCEPTED ||
                 requestStatus == RequestStatus.REJECTED)
         )
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
 
         if(isPrincipal &&
                 (requestStatus == RequestStatus.CONFIRMED ||
                 requestStatus == RequestStatus.DECLINED ||
                 requestStatus == RequestStatus.CANCELED)
         )
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
 
         if(!requestService.changeRequestStatus(requestId, requestStatus))
-            return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Cererea nu a fost gasita", HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok().build();
     }
