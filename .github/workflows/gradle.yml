@@ -9,7 +9,7 @@ name: Java CI with Gradle
 on:
   push:
     branches:
-      - controller_repository
+      - main
 env:
       IS_DB_PASSWORD: ${{ secrets.IS_DB_PASSWORD }}
       IS_JWT_SECRET_KEY: ${{ secrets.IS_JWT_SECRET_KEY }}
