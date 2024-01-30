@@ -1,6 +1,7 @@
 import React from "react"
 import EditClassDetails from "./EditClassDetails"
 import ChangeTeacher from "./ChangeTeacher"
+import ClassStudentsTable from "./ClassStudentsTable"
 
 export default function ClassDetails({
   selectedClassInfo,
@@ -25,6 +26,10 @@ export default function ClassDetails({
           classId={selectedClassInfo.id}
         />
       </div>
+      <ClassStudentsTable
+        reRenderRoot={reRenderRoot}
+        classData={selectedClassInfo}
+      />
     </div>
   )
 }

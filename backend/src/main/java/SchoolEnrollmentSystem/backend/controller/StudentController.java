@@ -152,24 +152,24 @@ public class StudentController {
         Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
         Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
         if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
-            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         String username = jwtUtil.resolveClaims(token).getSubject();
         if((isAdmin == null || !isAdmin) && !userService.principalHasAccessToClass(username, classId))
-            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         try{
             studentService.removeStudentFromClass(studentId, classId);
         } catch (NotFoundException e) {
-            return new ResponseEntity<>("Student or class not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Elevul sau clasa nu au putut fi gasite", HttpStatus.NOT_FOUND);
         }
         catch (ResourcesNotCorrelatedException e) {
-            return new ResponseEntity<>("Student is not assigned to a class", HttpStatus.CONFLICT);
+            return new ResponseEntity<>("Elevul nu face parte dintr-o clasa", HttpStatus.CONFLICT);
         }
         catch(Exception e){
-            return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Eroare la eliminarea elevului din clasa", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<>("Student removed successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Elev eliminat cu succes", HttpStatus.OK);
     }
 
     @PostMapping(path = "/move/{studentId}/toClass/{classId}")
