@@ -9,6 +9,7 @@ import Form from "../../components/form/Form"
 import CustomTable from "../../components/table/CustomTable"
 import { SchoolRequestStatus } from "../../types/SchoolRequestStatus"
 import { requestStatusMapping } from "../../usefulMappings"
+import { useNavigate } from "react-router-dom"
 
 export default function ChildDetails({
   closeModal,
@@ -277,6 +278,12 @@ export default function ChildDetails({
     },
   ]
 
+  const navigate = useNavigate();
+
+  const handleSchoolClick = (schoolId: number) => {
+    navigate(`/scoli/${schoolId}`);
+  }
+
   return (
     <div
       className="two-columns-child-details"
@@ -369,14 +376,22 @@ export default function ChildDetails({
             Copilul este deja inscris la scoala
             <br />
             <h3 style={{ fontWeight: "bold" }}>
-              <a
-                style={{ textDecoration: "none" }}
-                href={`/scoli/${childData.school.id}`}
-                target="_blank"
-                rel="noreferrer"
+              <Button
+                variant="contained"
+                style={{
+                  backgroundColor: "var(--main-background-color)",
+                  color: "black",
+                  marginTop: "1em",
+                  fontFamily: "var(--main-font)",
+                }}
+                onClick={() => {
+                  console.log("childData", childData)
+                  closeModal()
+                  handleSchoolClick(childData.school.id)
+                }}
               >
                 {childData.school.name}
-              </a>
+              </Button>
             </h3>
           </h3>
         )}
