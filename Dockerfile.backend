@@ -1,5 +1,7 @@
 FROM gradle:jdk21
 COPY --chmod=777 ./backend /usr/src/backend
 WORKDIR /usr/src/backend
+ENV IS_DB_PASSWORD pantatining-forminsting-humplionicaned
+ENV IS_JWT_SECRET_KEY cheiesecreta
 RUN gradle build
 CMD ["gradle", "bootRun"]
