@@ -1,4 +1,4 @@
-export const domainName = "http://localhost:8080"
+export const domainName = "http://catag.go.ro:8080"
 export const romanianNameRegex = /^([A-ZĂÎÂȘȚ]([a-zA-ZăîâșțĂÎÂȘȚ])*([-. ])*)+$/
 export const romanianCNPRegex = /^[56][0-9]{12}$/
 export const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/
