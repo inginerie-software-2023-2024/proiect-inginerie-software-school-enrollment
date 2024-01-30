@@ -59,10 +59,16 @@ INSERT INTO students (id, age, class_id, parent_id, school_id, cnp, first_name, 
 VALUES (2004, 10, null, 2001, null, '2222222222222', 'student2', 'student2');
 
 INSERT INTO students (id, age, class_id, parent_id, school_id, cnp, first_name, last_name)
+VALUES (2010, 10, null, 2002, null, '8888888888888', 'student8', 'student8');
+
+INSERT INTO students (id, age, class_id, parent_id, school_id, cnp, first_name, last_name)
 VALUES (2005, 10, 1007, 2001, 2, '3333333333333', 'student3', 'student3');
 
 INSERT INTO students (id, age, class_id, parent_id, school_id, cnp, first_name, last_name)
 VALUES (2008, 10, null, 2002, null, '0000000000000', 'student5', 'student5');
 
 INSERT INTO requests (id, school_id, student_id, status, grade)
-VALUES (3001, 1, 2008, 'SENT', 10);
+VALUES (3001, 1, 2008, 'ACCEPTED', 10);
+
+INSERT INTO requests (id, school_id, student_id, status, grade)
+VALUES (3002, 1, 2010, 'SENT', 10);

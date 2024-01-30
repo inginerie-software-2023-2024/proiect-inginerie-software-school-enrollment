@@ -59,7 +59,7 @@ public class RequestServiceTests {
     @Transactional
     void testChangeRequestStatusAccepted() {
         Assertions.assertDoesNotThrow(() -> {
-            requestService.changeRequestStatus(3001, RequestStatus.ACCEPTED);
+            requestService.changeRequestStatus(3002, RequestStatus.ACCEPTED);
 
             Assertions.assertEquals(RequestStatus.ACCEPTED, requestService.getRequestById(3001).getStatus());
 
