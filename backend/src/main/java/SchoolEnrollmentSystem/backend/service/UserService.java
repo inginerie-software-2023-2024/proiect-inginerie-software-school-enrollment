@@ -22,9 +22,9 @@ public class UserService {
         return !userRepository.findAll().stream().filter(user -> user.getEmail().equals(email)).toList().isEmpty();
     }
 
-    public void addUser(User user)
+    public User addUser(User user)
     {
-        userRepository.save(user);
+        return userRepository.save(user);
     }
 
     public User findByUsername(String username) {
@@ -55,6 +55,7 @@ public class UserService {
     }
 
     public Boolean principalHasAccessToClass(String principalUsername, Integer classId) {
+//        System.out.println("principalUsername: " + principalUsername);
         User principal = findByUsername(principalUsername);
 
         if(principal == null)

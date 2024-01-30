@@ -1,0 +1,40 @@
+.padded-fit-wrapper {
+  padding: 1rem;
+  width: fit-content;
+}
+
+.centering-wrapper {
+  display: grid;
+  place-items: center;
+}
+
+.two-columns-child-details {
+  display: grid;
+  grid-template-columns: 1fr 10fr;
+  grid-gap: 1rem;
+  place-items: center;
+}
+
+.role-display {
+  display: grid;
+  place-items: center;
+  padding: 1rem;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.top-spaced {
+  margin-top: 1rem;
+}
+
+.selected-row:hover {
+  background-color: #ededed;
+  cursor: pointer;
+}
+
+.two-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-gap: 1rem;
+  place-items: center;
+}

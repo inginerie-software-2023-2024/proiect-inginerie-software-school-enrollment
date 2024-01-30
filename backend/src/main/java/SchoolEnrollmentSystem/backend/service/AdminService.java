@@ -16,16 +16,16 @@ public class AdminService {
     @Autowired
     private AdminRepository adminRepository;
 
-    private void addAdmin(Admin admin)
+    public void addAdmin(Admin admin)
     {
         adminRepository.save(admin);
     }
 
-    private void updateAdmin(Admin admin)
+    public void updateAdmin(Admin admin)
     {
         adminRepository.save(admin);
     }
-    private void deleteAdmin(Integer id)
+    public void deleteAdminById(Integer id)
     {
         adminRepository.deleteById(id);
     }

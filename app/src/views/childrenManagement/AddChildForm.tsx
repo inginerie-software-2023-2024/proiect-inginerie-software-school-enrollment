@@ -1,20 +1,19 @@
 import React, { useState } from "react"
-import { Button, Grid, TextField } from "@mui/material"
+import { Button } from "@mui/material"
 import { fetchWithToken } from "../../tokenUtils"
 import PropTypes from "prop-types"
-import {
-  domainName,
-  romanianCNPRegex,
-  romanianNameRegex,
-} from "../../generalConstants"
+import { domainName } from "../../generalConstants"
 import { toast } from "sonner"
+import Form from "../../components/form/Form"
 
 export default function AddChildForm({
   closeModal,
   reRenderParent,
+  validateStudentData,
 }: {
   closeModal: () => void
   reRenderParent: () => void
+  validateStudentData: (studentData: any) => boolean
 }) {
   const [formData, setFormData] = useState({
     lastName: "",
@@ -24,33 +23,7 @@ export default function AddChildForm({
   })
 
   const handleFormSubmit = () => {
-    if (
-      formData.firstName === "" ||
-      formData.lastName === "" ||
-      formData.cnp === ""
-    ) {
-      toast.error("Toate campurile sunt obligatorii")
-      return
-    }
-
-    if (!romanianNameRegex.test(formData.firstName)) {
-      toast.error("Prenumele introdus nu este valid")
-      return
-    }
-    if (!romanianNameRegex.test(formData.lastName)) {
-      toast.error("Numele introdus nu este valid")
-      return
-    }
-
-    if (!romanianCNPRegex.test(formData.cnp)) {
-      toast.error("CNP-ul introdus nu este valid")
-      return
-    }
-
-    if (formData.age < 6 && formData.age > 18) {
-      toast.error("Varsta copilului trebuie sa fie intre 6 si 18 ani")
-      return
-    }
+    if (!validateStudentData(formData)) return
 
     const requestBody = {
       firstName: formData.firstName,
@@ -82,14 +55,7 @@ export default function AddChildForm({
       .catch((error) => {
         toast.error(error.message)
       })
-  }
-
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target
-    setFormData((prevState) => ({
-      ...prevState,
-      [name]: name === "age" ? parseInt(value) : value,
-    }))
+    console.log("Am facut apel la: ", domainName + "/students/add")
   }
 
   const fields = [
@@ -142,15 +108,7 @@ export default function AddChildForm({
   return (
     <>
       <h1 style={{ fontWeight: "bold" }}>Adauga Copil</h1>
-      <Grid container spacing={2} style={{ marginTop: "1em" }}>
-        {fields.map((field, index) => {
-          return (
-            <Grid key={index} item xs={12} sm={field.sm}>
-              <TextField {...field} onChange={handleChange} />
-            </Grid>
-          )
-        })}
-      </Grid>
+      <Form fields={fields} setFormData={setFormData} intFields={["age"]} />
       <Button
         variant="contained"
         style={{

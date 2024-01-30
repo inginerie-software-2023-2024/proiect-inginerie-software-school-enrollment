@@ -1,7 +1,9 @@
 package SchoolEnrollmentSystem.backend.service;
 
+import SchoolEnrollmentSystem.backend.DTOs.StudentDTO;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
+import SchoolEnrollmentSystem.backend.exception.ResourcesNotCorrelatedException;
 import SchoolEnrollmentSystem.backend.persistence.School;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import SchoolEnrollmentSystem.backend.persistence.User;
@@ -20,9 +22,11 @@ public class SchoolService {
     @Autowired
     private SchoolRepository schoolRepository;
     @Autowired
-    private ClassRepository classRepository;
+    private ClassService classService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private StudentService studentService;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();
@@ -52,14 +56,11 @@ public class SchoolService {
         return schoolRepository.findAll().stream().filter(school -> school.getPrincipal().getUsername().equals(username)).findFirst();
     }
 
-    public void addClass(Class c) throws AlreadyAssignedException {
-        if(classRepository.findByNameAndSchool(c.getName(), c.getSchool().getId()).isPresent())
-            throw new AlreadyAssignedException();
-
-        classRepository.save(c);
+    public Class addClass(Class c) throws AlreadyAssignedException {
+        return classService.addClass(c);
     }
 
-    public void addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
+    public User addTeacherToSchool(String username, School school) throws AlreadyAssignedException, NotFoundException {
         User teacher = userService.findByUsername(username);
         if(teacher == null)
             throw new NotFoundException();
@@ -72,5 +73,61 @@ public class SchoolService {
         school.getTeachers().add(teacher);
         userService.updateUser(teacher);
         update(school);
+
+        return teacher;
+    }
+
+    public void removeTeacherFromSchool(Integer teacherId, School school)
+        throws NotFoundException, ResourcesNotCorrelatedException {
+
+        User teacher = userService.getUserById(teacherId);
+
+        if(teacher == null)
+            throw new NotFoundException();
+
+        if(teacher.getSchoolTeacher() == null || !teacher.getSchoolTeacher().getId().equals(school.getId()))
+            throw new ResourcesNotCorrelatedException();
+
+
+        school.getTeachers().remove(teacher);
+
+        if(teacher.getSchoolClass() != null) {
+            teacher.getSchoolClass().setTeacher(null);
+            teacher.setSchoolClass(null);
+        }
+
+        teacher.setTeacher(false);
+        teacher.setSchoolTeacher(null);
+
+        userService.updateUser(teacher);
+        update(school);
+    }
+
+    public void removeClassFromSchool(Integer classId, School school) throws ResourcesNotCorrelatedException {
+        if(!isClassInSchool(classId, school))
+            throw new ResourcesNotCorrelatedException();
+
+        classService.deleteClassById(classId);
+    }
+
+    public boolean isClassInSchool(Integer classId, School school) {
+        return school.getClasses().stream().anyMatch(c -> c.getId().equals(classId));
+    }
+
+    public List<StudentDTO> getUnassignedStudentsOfSchool(School school) {
+        return school.getStudents().stream()
+                .filter(student -> student.getSchoolClass() == null)
+                .map(student -> new StudentDTO(
+                        student.getId(),
+                        student.getAge(),
+                        student.getFirstName(),
+                        student.getLastName(),
+                        student.getCnp(),
+                        student.getParent().getUsername(),
+                        student.getParent().getLastName(),
+                        student.getParent().getFirstName(),
+                        studentService.getRequiredGrade(student)
+                ))
+                .toList();
     }
 }

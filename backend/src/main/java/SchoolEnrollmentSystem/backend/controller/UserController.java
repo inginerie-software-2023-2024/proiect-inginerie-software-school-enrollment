@@ -2,7 +2,9 @@ package SchoolEnrollmentSystem.backend.controller;
 
 import SchoolEnrollmentSystem.backend.DTOs.LoginDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RegisterDTO;
+import SchoolEnrollmentSystem.backend.DTOs.UserInfoDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
+import SchoolEnrollmentSystem.backend.persistence.Admin;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.service.AdminService;
 import io.jsonwebtoken.*;
@@ -74,15 +76,37 @@ public class UserController {
     }
 
     @DeleteMapping("/delete")
-    public ResponseEntity<?> deleteAccount(@RequestHeader("Authorization") String token) {
-        String username = jwtUtil.resolveClaims(token).getSubject();
+    public ResponseEntity<?> deleteAccount(
+            @RequestHeader("Authorization") String token,
+            @RequestBody LoginDTO dummyLoginDTO
+    ) {
+        String password = dummyLoginDTO.getPassword();
+        System.out.println("Parola primita: " + password);
+        Claims claims = jwtUtil.resolveClaims(token);
+        String username = claims.getSubject();
         User user = userService.findByUsername(username);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
 
+        boolean anyStudentWithSchool = user.getStudents().stream()
+                                            .anyMatch(student -> student.getSchool() != null);
+        if(anyStudentWithSchool)
+            return new ResponseEntity<>(
+                    "Cannot delete user because there it has children enrolled to a school",
+                    HttpStatus.FORBIDDEN
+            );
+
+        if (!BCrypt.hashpw(password, user.getPasswordSalt()).equals(user.getPasswordHash()))
+            return new ResponseEntity<>("Incorrect password", HttpStatus.BAD_REQUEST);
+
         userService.deleteUserById(user.getId());
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            adminService.deleteAdminById(admin.getId());
+        }
 
         return new ResponseEntity<>("User account deleted successfully", HttpStatus.OK);
     }
@@ -99,13 +123,17 @@ public class UserController {
         return new ResponseEntity<>(userService.getAllUsers(), HttpStatus.OK);
     }
 
-    @PostMapping("/updateUser")
-    public ResponseEntity<?> updateUser(@RequestHeader("Authorization") String token, @RequestBody RegisterDTO updatedUser) {
+    @PutMapping("/updateUser")
+    public ResponseEntity<?> updateUser(
+            @RequestHeader("Authorization") String token,
+            @RequestBody UserInfoDTO updatedUser
+    ) {
         String username = jwtUtil.resolveClaims(token).getSubject();
         User user = userService.findByUsername(username);
+        Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
 
         if (user == null) {
-            return ResponseEntity.badRequest().body("User not found");
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
         }
 
         user.setUsername(updatedUser.getUsername());
@@ -113,21 +141,47 @@ public class UserController {
         user.setFirstName(updatedUser.getFirstName());
         user.setLastName(updatedUser.getLastName());
 
-        User databaseUser = userService.findByUsername(updatedUser.getUsername());
-        if (BCrypt.hashpw(updatedUser.getPassword(), databaseUser.getPasswordSalt()).equals(databaseUser.getPasswordHash())) {
-            user.setPasswordSalt(databaseUser.getPasswordSalt());
-            user.setPasswordHash(databaseUser.getPasswordHash());
-        } else {
-            String salt = BCrypt.gensalt();
-            String hashedPassword = BCrypt.hashpw(updatedUser.getPassword(), salt);
+        userService.updateUser(user);
 
-            user.setPasswordHash(hashedPassword);
-            user.setPasswordSalt(salt);
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            admin.setUsername(updatedUser.getUsername());
+            adminService.updateAdmin(admin);
         }
 
+        return new ResponseEntity<>("User updated.", HttpStatus.OK);
+    }
+
+    @PutMapping("/changePassword")
+    public ResponseEntity<?> changePassword(
+            @RequestHeader("Authorization") String token,
+            @RequestBody String newPassword
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        String username = claims.getSubject();
+        User user = userService.findByUsername(username);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
+
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        String salt = BCrypt.gensalt();
+        String hashedPassword = BCrypt.hashpw(newPassword, salt);
+
+        user.setPasswordHash(hashedPassword);
+        user.setPasswordSalt(salt);
 
         userService.updateUser(user);
-        return new ResponseEntity<>("User updated.", HttpStatus.OK);
+
+        if(isAdmin != null && isAdmin) {
+            Admin admin = adminService.findByUsername(username);
+            admin.setHash(hashedPassword);
+            admin.setSalt(salt);
+            adminService.updateAdmin(admin);
+        }
+
+        return new ResponseEntity<>("Password changed successfully", HttpStatus.OK);
     }
 
     @PostMapping("/changeRole/{role}")
@@ -152,5 +206,33 @@ public class UserController {
         String newToken = jwtUtil.createToken(user, role);
 
         return new ResponseEntity<>(newToken, HttpStatus.OK);
+    }
+
+    @GetMapping("/{username}")
+    public ResponseEntity<?> getUserByUsername(
+            @PathVariable String username,
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isAdmin = claims.get("admin", Boolean.class);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+        String usernameFromToken = claims.getSubject();
+        if((isAdmin == null || !isAdmin) && (isPrincipal == null || !isPrincipal) && !username.equals(usernameFromToken))
+            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ResponseEntity<>("User not found", HttpStatus.NOT_FOUND);
+        }
+
+        UserInfoDTO userInfoDTO = new UserInfoDTO(
+                user.getUsername(),
+                user.getFirstName(),
+                user.getLastName(),
+                user.getEmail()
+        );
+
+        return new ResponseEntity<>(userInfoDTO, HttpStatus.OK);
     }
 }

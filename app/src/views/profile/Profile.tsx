@@ -4,12 +4,13 @@ import { getCurrentUserRole } from "../../tokenUtils"
 import { useNavigate } from "react-router-dom"
 import { Card } from "@mui/material"
 import "./style.css"
-import ChildrenList from "./ChildrenList"
+import ProfileManagement from "./ProfileManagement"
 
 export default function Profile() {
   const currentRole = getCurrentUserRole()
   const navigate = useNavigate()
   const [userRole, setUserRole] = useState(currentRole)
+  const [, setDummyState] = useState(false)
 
   const updateRole = (role: string) => {
     setUserRole(role)
@@ -30,12 +31,23 @@ export default function Profile() {
 
   return (
     <>
-      <Card className="role-display">
+      <h1
+        style={{
+          fontWeight: "bold",
+          width: "100vw",
+          textAlign: "center",
+          display: "block",
+          margin: "0.5em 0 0.5em 0",
+        }}
+      >
+        Profil
+      </h1>
+      <div className="role-display">
         {localStorage.getItem("username")}, rolul dvs. selectat este{" "}
         {roleMapping[userRole!]}
-      </Card>
-      <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
-      {userRole === "parent" ? <ChildrenList /> : null}
+        <RoleSelector currentRole={userRole!} roleUpdater={updateRole} />
+      </div>
+      <ProfileManagement />
     </>
   )
 }

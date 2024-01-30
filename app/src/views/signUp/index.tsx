@@ -19,6 +19,7 @@ import {
   strongPasswordRegex,
 } from "../../generalConstants"
 import { toast } from "sonner"
+import Form from "../../components/form/Form"
 
 const defaultTheme = createTheme()
 
@@ -238,15 +239,7 @@ export const SignUp = () => {
             Sign up
           </Typography>
           <Box sx={{ mt: 3 }}>
-            <Grid container spacing={2}>
-              {fields.map((field, index) => {
-                return (
-                  <Grid key={index} item xs={12} sm={field.sm}>
-                    <TextField {...field} onChange={handleChange} />
-                  </Grid>
-                )
-              })}
-            </Grid>
+            <Form fields={fields} setFormData={setUser} />
             <Button
               fullWidth
               variant="contained"

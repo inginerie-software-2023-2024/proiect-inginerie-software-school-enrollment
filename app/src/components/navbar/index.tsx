@@ -1,13 +1,15 @@
 import "bootstrap/dist/css/bootstrap.min.css"
-import React from "react"
+import React, { useContext } from "react"
 import { useNavigate } from "react-router-dom"
 import "../../style.css"
 import { getCurrentUserRole } from "../../tokenUtils"
+import { login } from "../../app/reducers"
+import { ReactReduxContext } from "react-redux"
 
 export const NavBar = () => {
   const guestPagesLeft = [
     {
-      name: "Home",
+      name: "Acasa",
       path: "/acasa",
       access: true,
     },
@@ -25,27 +27,40 @@ export const NavBar = () => {
     },
     {
       name: "Scoala mea",
-      path: "/scoala-mea",
+      path: "/my-school",
       access:
         localStorage.getItem("token") !== null &&
         getCurrentUserRole() === "principal",
     },
     {
       name: "Clasa mea",
-      path: "/clasa-mea",
+      path: "/my-class",
       access:
         localStorage.getItem("token") !== null &&
         getCurrentUserRole() === "teacher",
     },
+    {
+      name: "Copiii mei",
+      path: "/my-children",
+      access:
+        localStorage.getItem("token") !== null &&
+        getCurrentUserRole() === "parent",
+    },
   ]
+
+  const { store } = useContext(ReactReduxContext)
+  if (localStorage.getItem("username")) {
+    store.dispatch(login(localStorage.getItem("username")))
+  }
+
   const guestPagesRightNotLoggedIn = [
     {
-      name: "Sign Up",
+      name: "Inregistrare",
       path: "/sign-up",
       access: true,
     },
     {
-      name: "Log In",
+      name: "Autentificare",
       path: "/log-in",
       access: true,
     },
@@ -58,7 +73,7 @@ export const NavBar = () => {
       access: true,
     },
     {
-      name: "Log Out",
+      name: "Deconectare",
       path: "/log-out",
       access: true,
     },
@@ -73,7 +88,12 @@ export const NavBar = () => {
   return (
     <nav
       className="navbar navbar-expand-lg"
-      style={{ backgroundColor: "var(--main-background-color)" }}
+      style={{
+        backgroundColor: "var(--main-background-color)",
+        position: "sticky",
+        top: 0,
+        zIndex: 100,
+      }}
     >
       <div className="container-fluid">
         <button

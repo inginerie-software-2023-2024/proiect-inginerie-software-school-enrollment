@@ -1,8 +1,11 @@
 package SchoolEnrollmentSystem.backend.controller;
 
+import SchoolEnrollmentSystem.backend.DTOs.GetRequestDTO;
 import SchoolEnrollmentSystem.backend.DTOs.RequestDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
+import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
+import SchoolEnrollmentSystem.backend.exception.InvalidStateException;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
 import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
 import SchoolEnrollmentSystem.backend.persistence.School;
@@ -19,7 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
@@ -48,7 +52,19 @@ public class RequestController {
         if(isAdmin == null || !isAdmin)
             return ResponseEntity.badRequest().body("Unauthorized");
 
-        return ResponseEntity.ok(requestService.getAllRequests());
+        List<GetRequestDTO> requestDTOs = requestService.getAllRequests().stream()
+                .map(request -> {
+                    GetRequestDTO requestDTO = new GetRequestDTO();
+                    requestDTO.setStudentId(request.getStudent().getId());
+                    requestDTO.setGrade(request.getGrade());
+                    requestDTO.setSchoolId(request.getSchool().getId());
+                    requestDTO.setId(request.getId());
+                    requestDTO.setStatus(request.getStatus());
+                    return requestDTO;
+                })
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(requestDTOs);
     }
 
     @GetMapping("/ofSchool/{schoolId}")
@@ -57,11 +73,10 @@ public class RequestController {
             @PathVariable Integer schoolId
     ) {
         Claims accessClaim = jwtUtil.resolveClaims(token);
-        Boolean isPrincipal = accessClaim.get("principal", Boolean.class);
         Boolean isAdmin = accessClaim.get("admin", Boolean.class);
 
         // if it's not a principal or an admin, return unauthorized
-        if((isPrincipal == null || !isPrincipal) && (isAdmin == null || !isAdmin))
+        if(isAdmin == null || !isAdmin)
             return ResponseEntity.badRequest().body("Unauthorized");
 
         Optional<School> schoolOptional = schoolService.getSchoolById(schoolId);
@@ -69,6 +84,28 @@ public class RequestController {
             return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok(requestService.getAllRequestsToSchool(schoolOptional.get()));
+    }
+
+    @GetMapping(path="/ofMySchool")
+    public ResponseEntity<?> getAllRequestsToMySchool(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims accessClaim = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = accessClaim.get("principal", Boolean.class);
+
+        // if it's not a principal, return unauthorized
+        if(isPrincipal == null || !isPrincipal)
+            return ResponseEntity.badRequest().body("Neautorizat");
+
+        String username = accessClaim.getSubject();
+        User principal = userService.findByUsername(username);
+        if(principal == null)
+            return new ResponseEntity<>("Directorul nu a fost gasit", HttpStatus.NOT_FOUND);
+
+        if(principal.getSchool() == null)
+            return new ResponseEntity<>("Nu aveti nici o scoala adaugata", HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity.ok(requestService.getAllRequestsToSchool(principal.getSchool()));
     }
 
     private ResponseEntity<?> getAllRequestsOfParentGeneric(String username) {
@@ -143,25 +180,27 @@ public class RequestController {
         Integer grade = requestDTO.getGrade();
 
         if(isParent == null || !isParent)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return ResponseEntity.badRequest().body("Neautorizat");
 
         Optional<Student> studentOptional = studentService.findById(studentId);
         if(studentOptional.isEmpty())
-            return new ResponseEntity<>("Student not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Copilul nu a fost gasit", HttpStatus.NOT_FOUND);
 
         Optional<School> schoolOptional = schoolService.getSchoolById(schoolId);
         if(schoolOptional.isEmpty())
-            return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Scoala nu a fost gasita", HttpStatus.NOT_FOUND);
 
         try {
             requestService.addRequest(studentOptional.get(), schoolOptional.get(), grade);
-
+        }
+        catch (AlreadyAssignedException e) {
+            return ResponseEntity.badRequest().body("Copilul este deja asignat la o scoala");
         }
         catch (NullArgumentException e) {
-            return ResponseEntity.internalServerError().build();
+            return new ResponseEntity<>("Eroare la adaugarea cererii", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         catch(UniqueResourceExistent e) {
-            return ResponseEntity.badRequest().body("Request already exists");
+            return ResponseEntity.badRequest().body("Deja exista o cerere pentru acest copil la aceasta scoala");
         }
 
         return ResponseEntity.ok().build();
@@ -174,40 +213,42 @@ public class RequestController {
             @RequestHeader("Authorization") String token
     ) {
         Claims accessClaim = jwtUtil.resolveClaims(token);
-        Boolean isTempPrincipal = accessClaim.get("principal", Boolean.class);
-        Boolean isTempAdmin = accessClaim.get("admin", Boolean.class);
-        Boolean isTempParent = accessClaim.get("parent", Boolean.class);
-
-        boolean isPrincipal = isTempPrincipal != null && isTempPrincipal;
-        boolean isAdmin = isTempAdmin != null && isTempAdmin;
-        boolean isParent = isTempParent != null && isTempParent;
+        boolean isPrincipal = accessClaim.get("currentRole", String.class).equals("principal");
+        boolean isAdmin = accessClaim.get("currentRole", String.class).equals("admin");
+        boolean isParent = accessClaim.get("currentRole", String.class).equals("parent");
 
         if(!isPrincipal && !isAdmin && !isParent)
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         RequestStatus requestStatus;
         try {
             requestStatus = RequestStatus.valueOf(status.toUpperCase());
         }
         catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Invalid status");
+            return new ResponseEntity<>("Status invalid", HttpStatus.BAD_REQUEST);
         }
 
         if(isParent &&
                 (requestStatus == RequestStatus.ACCEPTED ||
                 requestStatus == RequestStatus.REJECTED)
         )
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
 
         if(isPrincipal &&
                 (requestStatus == RequestStatus.CONFIRMED ||
                 requestStatus == RequestStatus.DECLINED ||
                 requestStatus == RequestStatus.CANCELED)
         )
-            return ResponseEntity.badRequest().body("Unauthorized");
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
 
-        if(!requestService.changeRequestStatus(requestId, requestStatus))
-            return new ResponseEntity<>("Request not found", HttpStatus.NOT_FOUND);
+
+        try {
+            if (!requestService.changeRequestStatus(requestId, requestStatus))
+                return new ResponseEntity<>("Cererea nu a fost gasita", HttpStatus.NOT_FOUND);
+        }
+        catch(InvalidStateException e) {
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok().build();
     }

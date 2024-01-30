@@ -10,6 +10,10 @@ import Profile from "./views/profile/Profile"
 import NotFoundPage from "./views/errors/NotFoundPage"
 import AdminDashBoard from "./views/admin/AdminDashboard"
 import { Toaster } from "sonner"
+import ChildrenManagement from "./views/childrenManagement/ChildrenManagement"
+import MySchool from "./views/mySchool/MySchool"
+import { SchoolDetails } from "./views/schools/SchoolDetails"
+import MyClass from "./views/myClass/MyClass"
 
 function App() {
   return (
@@ -20,13 +24,15 @@ function App() {
           <Route path={"/"} element={<Home />} />
           <Route path={"/acasa"} element={<Home />} />
           <Route path={"/scoli"} element={<Schools />} />
+          <Route path={"/scoli/:id"} element={<SchoolDetails />} />
           <Route path={"/sign-up"} element={<SignUp />} />
           <Route path={"/log-in"} element={<LogIn />} />
           <Route path={"/log-out"} element={<LogOut />} />
           <Route path={"/profile"} element={<Profile />} />
           <Route path={"/admin"} element={<AdminDashBoard />} />
-          <Route path={"/scoala-mea"} element={<AdminDashBoard />} />
-          <Route path={"/clasa-mea"} element={<AdminDashBoard />} />
+          <Route path={"/my-school"} element={<MySchool />} />
+          <Route path={"/my-children"} element={<ChildrenManagement />} />
+          <Route path={"/my-class"} element={<MyClass />} />
           <Route path={"*"} element={<NotFoundPage />} />
         </Routes>
       </Router>

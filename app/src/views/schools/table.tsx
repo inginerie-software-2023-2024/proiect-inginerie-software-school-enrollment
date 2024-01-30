@@ -1,4 +1,4 @@
-import React, {useContext} from "react"
+import React, { useContext, useEffect } from "react"
 
 import { useTheme } from "@mui/material/styles"
 import Box from "@mui/material/Box"
@@ -21,9 +21,12 @@ import { tableCellClasses } from "@mui/material/TableCell"
 import TableHead from "@mui/material/TableHead"
 import { Button } from "@mui/material"
 
-import { chooseSchool } from "../../app/reducers/schools"
-import {ReactReduxContext} from 'react-redux'
-
+import { chooseSchool, setSchools } from "../../app/reducers/schools"
+import { ReactReduxContext } from "react-redux"
+import axios from "axios"
+import { domainName } from "../../generalConstants"
+import { useNavigate } from "react-router-dom"
+import { getCurrentUserRole } from "../../tokenUtils"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -125,133 +128,20 @@ function TablePaginationActions(props: TablePaginationActionsProps) {
   )
 }
 
-const schools = [
-  {
-    name: "Scoala 1",
-    director: "Director 1",
-    points: 100,
-  },
-  {
-    name: "Scoala 2",
-    director: "Director 2",
-    points: 200,
-  },
-  {
-    name: "Scoala 3",
-    director: "Director 3",
-    points: 100,
-  },
-  {
-    name: "Scoala 4",
-    director: "Director 4",
-    points: 150,
-  },
-  {
-    name: "Scoala 5",
-    director: "Director 5",
-    points: 50,
-  },
-  {
-    name: "Scoala 6",
-    director: "Director 6",
-    points: 250,
-  },
-  {
-    name: "Scoala 7",
-    director: "Director 7",
-    points: 300,
-  },
-  {
-    name: "Scoala 8",
-    director: "Director 8",
-    points: 100,
-  },
-  {
-    name: "Scoala 9",
-    director: "Director 9",
-    points: 200,
-  },
-  {
-    name: "Scoala 10",
-    director: "Director 10",
-    points: 100,
-  },
-  {
-    name: "Scoala 11",
-    director: "Director 11",
-    points: 150,
-  },
-  {
-    name: "Scoala 12",
-    director: "Director 12",
-    points: 50,
-  },
-  {
-    name: "Scoala 13",
-    director: "Director 13",
-    points: 250,
-  },
-  {
-    name: "Scoala 14",
-    director: "Director 14",
-    points: 300,
-  },
-  {
-    name: "Scoala 15",
-    director: "Director 15",
-    points: 100,
-  },
-  {
-    name: "Scoala 16",
-    director: "Director 16",
-    points: 200,
-  },
-  {
-    name: "Scoala 17",
-    director: "Director 17",
-    points: 100,
-  },
-  {
-    name: "Scoala 18",
-    director: "Director 18",
-    points: 150,
-  },
-  {
-    name: "Scoala 19",
-    director: "Director 19",
-    points: 50,
-  },
-  {
-    name: "Scoala 20",
-    director: "Director 20",
-    points: 250,
-  },
-  {
-    name: "Scoala 21",
-    director: "Director 21",
-    points: 300,
-  },
-  {
-    name: "Scoala 22",
-    director: "Director 22",
-    points: 100,
-  },
-  {
-    name: "Scoala 23",
-    director: "Director 23",
-    points: 200,
-  },
-].sort((a, b) => (a.points > b.points ? -1 : 1))
-
 export const SchoolsTable = () => {
   const [page, setPage] = React.useState(0)
   const [rowsPerPage, setRowsPerPage] = React.useState(5)
 
   const [isSchoolClicked, setIsSchoolClicked] = React.useState(false)
 
-  const {store} = useContext(ReactReduxContext)
+  const { store } = useContext(ReactReduxContext)
   const state = store.getState()
 
+  const schools = state.schools || []
+
+  const navigate = useNavigate()
+
+  console.log("state in SchoolsTable: ", state)
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - schools.length) : 0
@@ -273,6 +163,7 @@ export const SchoolsTable = () => {
   const handleSchoolClick = (school: any) => {
     console.log("school: ", school)
     setIsSchoolClicked(true)
+    navigate("/scoli/" + school.id)
     store.dispatch(chooseSchool(school))
   }
 
@@ -281,9 +172,9 @@ export const SchoolsTable = () => {
       <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
         <TableHead>
           <StyledTableRow>
+            <StyledTableCell>Nr. crt</StyledTableCell>
             <StyledTableCell>School</StyledTableCell>
             <StyledTableCell align="right">Director</StyledTableCell>
-            <StyledTableCell align="right">Points</StyledTableCell>
           </StyledTableRow>
         </TableHead>
         <TableBody>
@@ -293,20 +184,20 @@ export const SchoolsTable = () => {
                 page * rowsPerPage + rowsPerPage,
               )
             : schools
-          ).map((school) => {
-            const { name, director, points } = school
+          ).map((school: any, index: number) => {
+            const { name, principal } = school
             return (
               <StyledTableRow key={name}>
+                <TableCell style={{ width: 160 }} align="left">
+                  {index + 1}
+                </TableCell>
                 <TableCell component="th" scope="row">
-                  <Button onClick={() => handleSchoolClick(name)}>
+                  <Button onClick={() => handleSchoolClick(school)}>
                     {name}
                   </Button>
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
-                  {director}
-                </TableCell>
-                <TableCell style={{ width: 160 }} align="right">
-                  {points}
+                  {`${principal.lastName} ${principal.firstName} (${principal.username})`}
                 </TableCell>
               </StyledTableRow>
             )

@@ -13,5 +13,5 @@ public interface ClassRepository extends JpaRepository<Class, Integer> {
     Optional<Class> findTopByTeacherId(Integer teacherId);
 
     @Query("SELECT c FROM Class c WHERE c.name = ?1 and c.school.id = ?2")
-    Optional<Class> findByNameAndSchool(String name, Integer schoolId);
+    Optional<Class> findByNameAndSchoolId(String name, Integer schoolId);
 }
