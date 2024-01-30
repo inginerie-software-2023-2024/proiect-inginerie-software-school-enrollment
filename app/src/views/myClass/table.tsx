@@ -135,12 +135,13 @@ export const TeacherStudentsTable = () => {
 
   const { store } = useContext(ReactReduxContext)
   const state = store.getState()
-  const { teacherStudents } = state
+  const { teacherStudents, teacherClass } = state
 
   const navigate = useNavigate()
 
   console.log("state in my-class table: ", state)
   console.log("teacherStudents in my-class table: ", teacherStudents)
+  console.log("teacherClass in my-class table: ", teacherClass)
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0
@@ -163,9 +164,6 @@ export const TeacherStudentsTable = () => {
 
   return (
     <>
-      <h3 style={{textAlign: "center"}}>
-        ({teacherStudents.length} Elevi)
-      </h3>
       <TableContainer component={Paper} style={{ padding: "50px" }}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableHead>
