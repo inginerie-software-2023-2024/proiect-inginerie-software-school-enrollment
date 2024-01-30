@@ -5,6 +5,7 @@ import SchoolEnrollmentSystem.backend.DTOs.RequestDTO;
 import SchoolEnrollmentSystem.backend.Utils.JwtUtil;
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
+import SchoolEnrollmentSystem.backend.exception.InvalidStateException;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
 import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
 import SchoolEnrollmentSystem.backend.persistence.School;
@@ -21,8 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -241,8 +241,14 @@ public class RequestController {
         )
             return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
 
-        if(!requestService.changeRequestStatus(requestId, requestStatus))
-            return new ResponseEntity<>("Cererea nu a fost gasita", HttpStatus.NOT_FOUND);
+
+        try {
+            if (!requestService.changeRequestStatus(requestId, requestStatus))
+                return new ResponseEntity<>("Cererea nu a fost gasita", HttpStatus.NOT_FOUND);
+        }
+        catch(InvalidStateException e) {
+            return new ResponseEntity<>("Schimbare de status neautorizata", HttpStatus.BAD_REQUEST);
+        }
 
         return ResponseEntity.ok().build();
     }

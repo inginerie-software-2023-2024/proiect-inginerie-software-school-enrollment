@@ -2,6 +2,7 @@ package SchoolEnrollmentSystem.backend.service;
 
 import SchoolEnrollmentSystem.backend.enums.RequestStatus;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
+import SchoolEnrollmentSystem.backend.exception.InvalidStateException;
 import SchoolEnrollmentSystem.backend.exception.NullArgumentException;
 import SchoolEnrollmentSystem.backend.exception.UniqueResourceExistent;
 import SchoolEnrollmentSystem.backend.persistence.Request;
@@ -25,6 +26,18 @@ public class RequestService {
 
     @Autowired
     private StudentRepository studentRepository;
+
+    private final Map<RequestStatus, List<RequestStatus>> statusValidTransitions =
+            new HashMap<>(
+                    Map.of(
+                            RequestStatus.SENT, List.of(RequestStatus.ACCEPTED, RequestStatus.REJECTED, RequestStatus.CANCELED),
+                            RequestStatus.ACCEPTED, List.of(RequestStatus.CONFIRMED, RequestStatus.DECLINED),
+                            RequestStatus.REJECTED, new LinkedList<>(),
+                            RequestStatus.CONFIRMED, new LinkedList<>(),
+                            RequestStatus.DECLINED, new LinkedList<>(),
+                            RequestStatus.CANCELED, new LinkedList<>()
+                    )
+            );
 
     public List<Request> getAllRequests() {
         return requestRepository.findAll();
@@ -84,16 +97,20 @@ public class RequestService {
         requestRepository.save(request);
     }
 
-    public boolean changeRequestStatus(Integer requestId, RequestStatus status) {
+    public boolean changeRequestStatus(Integer requestId, RequestStatus newStatus) throws InvalidStateException {
         Optional<Request> requestOptional = requestRepository.findById(requestId);
         if (requestOptional.isEmpty())
             return false;
 
+
         Request request = requestOptional.get();
-        request.setStatus(status);
+        if (!statusValidTransitions.get(request.getStatus()).contains(newStatus))
+            throw new InvalidStateException();
+
+        request.setStatus(newStatus);
         requestRepository.save(request);
 
-        if (status == RequestStatus.CONFIRMED) {
+        if (newStatus == RequestStatus.CONFIRMED) {
             Student student = request.getStudent();
             student.setSchool(request.getSchool());
             studentRepository.save(student);

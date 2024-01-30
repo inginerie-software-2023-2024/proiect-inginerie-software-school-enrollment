@@ -45,21 +45,25 @@ public class RequestServiceTests {
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Transactional
     void testChangeRequestStatusConfirmed() {
-        requestService.changeRequestStatus(3001, RequestStatus.CONFIRMED);
+        Assertions.assertDoesNotThrow(() -> {
+            requestService.changeRequestStatus(3001, RequestStatus.CONFIRMED);
 
-        Assertions.assertEquals(RequestStatus.CONFIRMED, requestService.getRequestById(3001).getStatus());
+            Assertions.assertEquals(RequestStatus.CONFIRMED, requestService.getRequestById(3001).getStatus());
 
-        Assertions.assertEquals(studentService.findById(2008).get().getSchool().getId(), requestService.getRequestById(3001).getSchool().getId());
+            Assertions.assertEquals(studentService.findById(2008).get().getSchool().getId(), requestService.getRequestById(3001).getSchool().getId());
+        });
     }
 
     @Test
     @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
     @Transactional
     void testChangeRequestStatusAccepted() {
-        requestService.changeRequestStatus(3001, RequestStatus.ACCEPTED);
+        Assertions.assertDoesNotThrow(() -> {
+            requestService.changeRequestStatus(3001, RequestStatus.ACCEPTED);
 
-        Assertions.assertEquals(RequestStatus.ACCEPTED, requestService.getRequestById(3001).getStatus());
+            Assertions.assertEquals(RequestStatus.ACCEPTED, requestService.getRequestById(3001).getStatus());
 
-        Assertions.assertNull(studentService.findById(2008).get().getSchool());
+            Assertions.assertNull(studentService.findById(2008).get().getSchool());
+        });
     }
 }
