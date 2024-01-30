@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
@@ -71,6 +72,22 @@ public class StudentController {
             return new ResponseEntity<>("Something went wrong", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity<>("Student deleted successfully", HttpStatus.OK);
+    }
+
+    @DeleteMapping(path = "deleteByCNP/{cnp}")
+    public ResponseEntity<?> deleteStudentByCNP(
+            @PathVariable String cnp
+    ) {
+        try{
+            System.out.println("Inainte de stergere");
+            studentService.deleteStudentByCNP(cnp);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>("Copilul nu a fost gasit", HttpStatus.OK);
+        }
+        catch(Exception e){
+            return new ResponseEntity<>("Eroare la stergerea copilului", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+        return new ResponseEntity<>("Copilul a fost sters", HttpStatus.OK);
     }
 
     @PostMapping(path = "/add")
