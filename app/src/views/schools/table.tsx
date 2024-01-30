@@ -27,6 +27,7 @@ import axios from "axios"
 import { domainName } from "../../generalConstants"
 import { useNavigate } from "react-router-dom"
 import { getCurrentUserRole } from "../../tokenUtils"
+import { toast } from "sonner"
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -192,7 +193,17 @@ export const SchoolsTable = () => {
                   {index + 1}
                 </TableCell>
                 <TableCell component="th" scope="row">
-                  <Button onClick={() => handleSchoolClick(school)}>
+                  <Button
+                    onClick={() => {
+                      if (localStorage.getItem("token") === null) {
+                        toast.info(
+                          "Trebuie sa va autentificati pentru a accesa aceasta pagina",
+                        )
+                        return
+                      }
+                      handleSchoolClick(school)
+                    }}
+                  >
                     {name}
                   </Button>
                 </TableCell>
