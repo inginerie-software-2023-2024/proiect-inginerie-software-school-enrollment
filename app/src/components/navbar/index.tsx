@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom"
 import "../../style.css"
 import { getCurrentUserRole } from "../../tokenUtils"
 import { login } from "../../app/reducers"
-import {ReactReduxContext} from 'react-redux'
+import { ReactReduxContext } from "react-redux"
 
 export const NavBar = () => {
   const guestPagesLeft = [
     {
-      name: "Home",
+      name: "Acasa",
       path: "/acasa",
       access: true,
     },
@@ -48,19 +48,19 @@ export const NavBar = () => {
     },
   ]
 
-  const {store} = useContext(ReactReduxContext)
-  if(localStorage.getItem("username")) {
+  const { store } = useContext(ReactReduxContext)
+  if (localStorage.getItem("username")) {
     store.dispatch(login(localStorage.getItem("username")))
   }
 
   const guestPagesRightNotLoggedIn = [
     {
-      name: "Sign Up",
+      name: "Inregistrare",
       path: "/sign-up",
       access: true,
     },
     {
-      name: "Log In",
+      name: "Autentificare",
       path: "/log-in",
       access: true,
     },
@@ -73,7 +73,7 @@ export const NavBar = () => {
       access: true,
     },
     {
-      name: "Log Out",
+      name: "Deconectare",
       path: "/log-out",
       access: true,
     },
