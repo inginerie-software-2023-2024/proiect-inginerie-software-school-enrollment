@@ -165,12 +165,12 @@ export const TeacherStudentsTable = () => {
   return (
     <>
       <TableContainer component={Paper} style={{ padding: "50px" }}>
-        <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
+        <Table sx={{ minWidth: 500, paddingLeft: "200px"}} aria-label="custom pagination table">
           <TableHead>
             <StyledTableRow>
               <StyledTableCell>Nume</StyledTableCell>
+              <StyledTableCell align="right">Initiala Parinte</StyledTableCell>
               <StyledTableCell align="right">Prenume</StyledTableCell>
-              <StyledTableCell align="right">Username</StyledTableCell>
             </StyledTableRow>
           </TableHead>
           <TableBody>
@@ -180,20 +180,20 @@ export const TeacherStudentsTable = () => {
                   page * rowsPerPage + rowsPerPage,
                 )
               : teacherStudents
-            ).map((user: any) => {
+            ).map((student: any) => {
               const {
                 id,
-                username,
-                principal: isPrincipal,
-                teacher: isTeacher,
-              } = user
+                firstName,
+                lastName,
+                parentFirstName,
+              } = student;
               return (
-                <StyledTableRow key={username}>
+                <StyledTableRow key={id}>
                   <TableCell component="th" scope="row">
-                    {username}
+                    {lastName}
                   </TableCell>
-                  <TableCell style={{ width: 160 }} align="right"></TableCell>
-                  <TableCell style={{ width: 160 }} align="right"></TableCell>
+                  <TableCell align="right">{parentFirstName[0]}.</TableCell>
+                  <TableCell align="right">{firstName}</TableCell>
                 </StyledTableRow>
               )
             })}
