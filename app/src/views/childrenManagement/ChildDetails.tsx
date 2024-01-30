@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import Form from "../../components/form/Form"
 import CustomTable from "../../components/table/CustomTable"
 import { SchoolRequestStatus } from "../../types/SchoolRequestStatus"
+import { requestStatusMapping } from "../../usefulMappings"
 
 export default function ChildDetails({
   closeModal,
@@ -29,6 +30,10 @@ export default function ChildDetails({
     const fetchData = async () => {
       try {
         const response = await fetchWithToken(
+          domainName + `/requests/ofStudent/${childData.id}`,
+        )
+        console.log(
+          "Am facut apel la: ",
           domainName + `/requests/ofStudent/${childData.id}`,
         )
         const rawData = await response.json()
@@ -56,9 +61,14 @@ export default function ChildDetails({
         `${domainName}/requests/changeStatus/${requestId}/${status}`,
         requestOptions,
       )
+      console.log(
+        "Am facut apel la: ",
+        `${domainName}/requests/changeStatus/${requestId}/${status}`,
+      )
       if (response.ok) {
         toast.success("Statusul cererii a fost modificat cu succes")
         reRenderParent()
+        closeModal()
       } else {
         const responseMessage = await response.text()
         toast.error(responseMessage)
@@ -69,12 +79,13 @@ export default function ChildDetails({
   }
 
   useEffect(() => {
+    console.log("RequestsData: ", requestsData)
     setTableRequestsData(
       requestsData.map((request) => {
         return {
           school: request.school.name,
           grade: request.grade,
-          status: request.status,
+          status: requestStatusMapping[request.status],
           id: request.id,
           actions: [
             <div
@@ -95,7 +106,10 @@ export default function ChildDetails({
                     fontSize: 10,
                   }}
                   size="small"
-                  onClick={() => changeRequestStatus(request.id, "CANCELED")}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    changeRequestStatus(request.id, "CANCELED")
+                  }}
                 >
                   Anuleaza
                 </Button>
@@ -109,7 +123,10 @@ export default function ChildDetails({
                     fontSize: 10,
                   }}
                   size="small"
-                  onClick={() => changeRequestStatus(request.id, "CONFIRMED")}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    changeRequestStatus(request.id, "CONFIRMED")
+                  }}
                 >
                   Confirma
                 </Button>
@@ -123,7 +140,10 @@ export default function ChildDetails({
                     fontSize: 10,
                   }}
                   size="small"
-                  onClick={() => changeRequestStatus(request.id, "DECLINED")}
+                  onClick={(event) => {
+                    event.stopPropagation()
+                    changeRequestStatus(request.id, "DECLINED")
+                  }}
                 >
                   Refuza
                 </Button>
@@ -323,8 +343,8 @@ export default function ChildDetails({
         <h2 style={{ textAlign: "center", fontWeight: "bold" }}>
           Cererile pentru Copil
         </h2>
-        {requestsData.length > 0 ? (
-          childData.school == null ? (
+        {childData.school == null ? (
+          requestsData.length > 0 ? (
             <CustomTable
               tableHeaders={["Scoala", "Clasa", "Status", "Actiuni"]}
               tableData={tableRequestsData}
@@ -333,18 +353,31 @@ export default function ChildDetails({
             />
           ) : (
             <h3
-              style={{
-                color: "green",
-                textAlign: "center",
-                fontWeight: "bold",
-              }}
+              style={{ color: "red", textAlign: "center", fontWeight: "bold" }}
             >
-              Copilul este deja inscris la o scoala
+              Nu exista cereri pentru acest copil
             </h3>
           )
         ) : (
-          <h3 style={{ color: "red", textAlign: "center", fontWeight: "bold" }}>
-            Nu exista cereri pentru acest copil
+          <h3
+            style={{
+              color: "green",
+              textAlign: "center",
+              fontWeight: "bold",
+            }}
+          >
+            Copilul este deja inscris la scoala
+            <br />
+            <h3 style={{ fontWeight: "bold" }}>
+              <a
+                style={{ textDecoration: "none" }}
+                href={`/scoli/${childData.school.id}`}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {childData.school.name}
+              </a>
+            </h3>
           </h3>
         )}
       </div>

@@ -68,7 +68,7 @@ public class TeacherController {
         return ResponseEntity.ok(students);
     }
 
-    @GetMapping(path = "/getMyClassDetails")
+        @GetMapping(path = "/getMyClassDetails")
     public ResponseEntity<?> getMyClassDetails(
             @RequestHeader("Authorization") String token
     ) {

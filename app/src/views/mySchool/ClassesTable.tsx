@@ -160,6 +160,7 @@ export default function ClassesTable({
             left: "50%",
             transform: "translate(-50%, -50%)",
             width: "fit-content",
+            minWidth: "90vw",
             bgcolor: "background.paper",
             border: "2px solid #000",
             boxShadow: 24,

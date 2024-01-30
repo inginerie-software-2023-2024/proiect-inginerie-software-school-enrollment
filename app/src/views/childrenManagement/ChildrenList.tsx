@@ -48,6 +48,7 @@ export default function ChildrenList({ tableStyle }: { tableStyle?: object }) {
     const fetchData = async () => {
       try {
         const response = await fetchWithToken(domainName + "/students/ofMyself")
+        console.log("Am facut apel la: ", domainName + "/students/ofMyself")
         const rawData = await response.json()
 
         const formattedData: Array<ChildData> = rawData.map(

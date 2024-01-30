@@ -153,4 +153,11 @@ public class StudentService {
             assignStudentToClass(studentId, currentStudentClassId);
         }
     }
+
+    public Integer getRequiredGrade(Student student) {
+        if(student == null || student.getSchool() == null)
+            return -1;
+
+        return student.getRequests().stream().toList().getFirst().getGrade();
+    }
 }

@@ -234,7 +234,7 @@ export const AllUsersTable = () => {
                 </TableCell>
                 <TableCell style={{ width: 160 }} align="right">
                   <Button onClick={(e) => handlePromote(e, id, username)}>
-                    Make director
+                    Promoveaza director
                   </Button>
                 </TableCell>
               </StyledTableRow>

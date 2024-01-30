@@ -14,10 +14,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -100,7 +97,20 @@ public class RequestService {
             Student student = request.getStudent();
             student.setSchool(request.getSchool());
             studentRepository.save(student);
+
+            deleteAllStudentRequestsExceptFor(student, request);
         }
         return true;
+    }
+
+    private void deleteAllStudentRequestsExceptFor(Student student, Request request) {
+        List<Request> requestsToDelete = student.getRequests().stream()
+                .filter(r -> !r.getId().equals(request.getId())).toList();
+        requestRepository.deleteAll(requestsToDelete);
+
+        HashSet<Request> newRequests = new HashSet<>();
+        newRequests.add(request);
+        student.setRequests(newRequests);
+        studentRepository.save(student);
     }
 }

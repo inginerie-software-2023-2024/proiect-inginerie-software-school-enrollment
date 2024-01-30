@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from "react"
+import React, { useContext, useEffect } from "react"
 
 import { useTheme } from "@mui/material/styles"
 import Box from "@mui/material/Box"
@@ -22,12 +22,11 @@ import TableHead from "@mui/material/TableHead"
 import { Button } from "@mui/material"
 
 import { chooseSchool, setSchools } from "../../app/reducers/schools"
-import {ReactReduxContext} from 'react-redux'
-import axios from 'axios'
+import { ReactReduxContext } from "react-redux"
+import axios from "axios"
 import { domainName } from "../../generalConstants"
 import { useNavigate } from "react-router-dom"
 import { getCurrentUserRole } from "../../tokenUtils"
-
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -135,14 +134,14 @@ export const SchoolsTable = () => {
 
   const [isSchoolClicked, setIsSchoolClicked] = React.useState(false)
 
-  const {store} = useContext(ReactReduxContext)
+  const { store } = useContext(ReactReduxContext)
   const state = store.getState()
 
-  const schools = state.schools || [];
+  const schools = state.schools || []
 
   const navigate = useNavigate()
-  
-  console.log('state in SchoolsTable: ', state)
+
+  console.log("state in SchoolsTable: ", state)
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - schools.length) : 0
@@ -164,7 +163,7 @@ export const SchoolsTable = () => {
   const handleSchoolClick = (school: any) => {
     console.log("school: ", school)
     setIsSchoolClicked(true)
-    navigate("/scoli/" + school.id);
+    navigate("/scoli/" + school.id)
     store.dispatch(chooseSchool(school))
   }
 
@@ -190,7 +189,7 @@ export const SchoolsTable = () => {
             return (
               <StyledTableRow key={name}>
                 <TableCell style={{ width: 160 }} align="left">
-                  {index}
+                  {index + 1}
                 </TableCell>
                 <TableCell component="th" scope="row">
                   <Button onClick={() => handleSchoolClick(school)}>

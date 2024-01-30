@@ -55,6 +55,7 @@ export default function AddChildForm({
       .catch((error) => {
         toast.error(error.message)
       })
+    console.log("Am facut apel la: ", domainName + "/students/add")
   }
 
   const fields = [

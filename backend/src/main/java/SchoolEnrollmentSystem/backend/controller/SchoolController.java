@@ -401,7 +401,7 @@ public class SchoolController {
 
         List<Class> classes = classService.getClassesBySchoolId(school.getId());
 
-        return ResponseEntity.ok(classes);
+        return ResponseEntity.ok(classes.stream().map(ClassDTO::new).toList());
     }
 
     @PutMapping(path = "/updateClassDetails/{classId}")
@@ -436,5 +436,24 @@ public class SchoolController {
         }
 
         return ResponseEntity.ok("Clasa actualizata cu succes");
+    }
+
+    @GetMapping(path = "/getUnassignedStudentsOfMySchool")
+    public ResponseEntity<?> getUnassignedStudentsOfMySchool(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims claims = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = claims.get("principal", Boolean.class);
+
+        if(isPrincipal == null || !isPrincipal)
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
+
+        String principalUsername = claims.getSubject();
+        Optional<School> schoolOptional = schoolService.getSchoolByPrincipalUsername(principalUsername);
+
+        if(schoolOptional.isEmpty())
+            return new ResponseEntity<>("Nu aveti nici o scoala adaugata", HttpStatus.NOT_FOUND);
+
+        return ResponseEntity.ok(schoolService.getUnassignedStudentsOfSchool(schoolOptional.get()));
     }
 }

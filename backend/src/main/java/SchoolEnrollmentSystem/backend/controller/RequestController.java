@@ -73,11 +73,10 @@ public class RequestController {
             @PathVariable Integer schoolId
     ) {
         Claims accessClaim = jwtUtil.resolveClaims(token);
-        Boolean isPrincipal = accessClaim.get("principal", Boolean.class);
         Boolean isAdmin = accessClaim.get("admin", Boolean.class);
 
         // if it's not a principal or an admin, return unauthorized
-        if((isPrincipal == null || !isPrincipal) && (isAdmin == null || !isAdmin))
+        if(isAdmin == null || !isAdmin)
             return ResponseEntity.badRequest().body("Unauthorized");
 
         Optional<School> schoolOptional = schoolService.getSchoolById(schoolId);
@@ -85,6 +84,28 @@ public class RequestController {
             return new ResponseEntity<>("School not found", HttpStatus.NOT_FOUND);
 
         return ResponseEntity.ok(requestService.getAllRequestsToSchool(schoolOptional.get()));
+    }
+
+    @GetMapping(path="/ofMySchool")
+    public ResponseEntity<?> getAllRequestsToMySchool(
+            @RequestHeader("Authorization") String token
+    ) {
+        Claims accessClaim = jwtUtil.resolveClaims(token);
+        Boolean isPrincipal = accessClaim.get("principal", Boolean.class);
+
+        // if it's not a principal, return unauthorized
+        if(isPrincipal == null || !isPrincipal)
+            return ResponseEntity.badRequest().body("Neautorizat");
+
+        String username = accessClaim.getSubject();
+        User principal = userService.findByUsername(username);
+        if(principal == null)
+            return new ResponseEntity<>("Directorul nu a fost gasit", HttpStatus.NOT_FOUND);
+
+        if(principal.getSchool() == null)
+            return new ResponseEntity<>("Nu aveti nici o scoala adaugata", HttpStatus.BAD_REQUEST);
+
+        return ResponseEntity.ok(requestService.getAllRequestsToSchool(principal.getSchool()));
     }
 
     private ResponseEntity<?> getAllRequestsOfParentGeneric(String username) {
@@ -163,7 +184,7 @@ public class RequestController {
 
         Optional<Student> studentOptional = studentService.findById(studentId);
         if(studentOptional.isEmpty())
-            return new ResponseEntity<>("Studentul nu a fost gasit", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Copilul nu a fost gasit", HttpStatus.NOT_FOUND);
 
         Optional<School> schoolOptional = schoolService.getSchoolById(schoolId);
         if(schoolOptional.isEmpty())
@@ -173,7 +194,7 @@ public class RequestController {
             requestService.addRequest(studentOptional.get(), schoolOptional.get(), grade);
         }
         catch (AlreadyAssignedException e) {
-            return ResponseEntity.badRequest().body("Studentul este deja asignat la o scoala");
+            return ResponseEntity.badRequest().body("Copilul este deja asignat la o scoala");
         }
         catch (NullArgumentException e) {
             return new ResponseEntity<>("Eroare la adaugarea cererii", HttpStatus.INTERNAL_SERVER_ERROR);
@@ -192,13 +213,9 @@ public class RequestController {
             @RequestHeader("Authorization") String token
     ) {
         Claims accessClaim = jwtUtil.resolveClaims(token);
-        Boolean isTempPrincipal = accessClaim.get("principal", Boolean.class);
-        Boolean isTempAdmin = accessClaim.get("admin", Boolean.class);
-        Boolean isTempParent = accessClaim.get("parent", Boolean.class);
-
-        boolean isPrincipal = isTempPrincipal != null && isTempPrincipal;
-        boolean isAdmin = isTempAdmin != null && isTempAdmin;
-        boolean isParent = isTempParent != null && isTempParent;
+        boolean isPrincipal = accessClaim.get("currentRole", String.class).equals("principal");
+        boolean isAdmin = accessClaim.get("currentRole", String.class).equals("admin");
+        boolean isParent = accessClaim.get("currentRole", String.class).equals("parent");
 
         if(!isPrincipal && !isAdmin && !isParent)
             return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);

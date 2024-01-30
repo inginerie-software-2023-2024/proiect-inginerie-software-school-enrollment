@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.service;
 
+import SchoolEnrollmentSystem.backend.DTOs.StudentDTO;
 import SchoolEnrollmentSystem.backend.exception.AlreadyAssignedException;
 import SchoolEnrollmentSystem.backend.exception.NotFoundException;
 import SchoolEnrollmentSystem.backend.exception.ResourcesNotCorrelatedException;
@@ -24,6 +25,8 @@ public class SchoolService {
     private ClassService classService;
     @Autowired
     private UserService userService;
+    @Autowired
+    private StudentService studentService;
 
     public List<School> getAllSchools() {
         return schoolRepository.findAll();
@@ -109,5 +112,22 @@ public class SchoolService {
 
     public boolean isClassInSchool(Integer classId, School school) {
         return school.getClasses().stream().anyMatch(c -> c.getId().equals(classId));
+    }
+
+    public List<StudentDTO> getUnassignedStudentsOfSchool(School school) {
+        return school.getStudents().stream()
+                .filter(student -> student.getSchoolClass() == null)
+                .map(student -> new StudentDTO(
+                        student.getId(),
+                        student.getAge(),
+                        student.getFirstName(),
+                        student.getLastName(),
+                        student.getCnp(),
+                        student.getParent().getUsername(),
+                        student.getParent().getLastName(),
+                        student.getParent().getFirstName(),
+                        studentService.getRequiredGrade(student)
+                ))
+                .toList();
     }
 }

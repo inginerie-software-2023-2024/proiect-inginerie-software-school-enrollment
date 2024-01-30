@@ -5,6 +5,8 @@ import InviteTeachers from "./InviteTeachers"
 import "./style.css"
 import TeachersTable from "./TeachersTable"
 import ClassesTable from "./ClassesTable"
+import StudentsRequests from "./StudentsRequests"
+import UnasignedStudents from "./UnasignedStudents"
 
 export default function SchoolManagement({
   schoolInfo,
@@ -37,6 +39,11 @@ export default function SchoolManagement({
         classesData={classesData}
         reRenderRoot={reRenderRoot}
         teachersData={teachersData}
+      />
+      <StudentsRequests reRenderRoot={reRenderRoot} />
+      <UnasignedStudents
+        reRenderRoot={reRenderRoot}
+        classesData={classesData}
       />
     </div>
   )

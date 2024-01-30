@@ -1,5 +1,6 @@
 package SchoolEnrollmentSystem.backend.persistence;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -35,6 +36,7 @@ public class Class {
     private School school;
 
     @OneToMany(mappedBy = "schoolClass")
+    @JsonIgnore
     private Set<Student> students = new HashSet<>();
 
     @Override
