@@ -53,10 +53,9 @@ export const SignUp = () => {
       return null
     }
 
-    // const strongPassword =
-    //   password !== undefined &&
-    //   strongPasswordRegex.test(password)
-    const strongPassword = true //! decomenteaza linia de mai sus si sterge linia asta cand ai terminat de testat sign up-ul
+    const strongPassword =
+      password !== undefined && strongPasswordRegex.test(password)
+    // const strongPassword = true //! decomenteaza linia de mai sus si sterge linia asta cand ai terminat de testat sign up-ul
 
     if (password === undefined || !strongPassword) {
       toast.error(

@@ -3,6 +3,7 @@ import axios from "axios"
 import { domainName } from "../../generalConstants"
 
 const getStudentsOfTeacher = async () => {
+  if(!localStorage.getItem("token")) return [];
   try {
     const { data } = await axios.get(
       `${domainName}/teacher/getMyClassStudents`,

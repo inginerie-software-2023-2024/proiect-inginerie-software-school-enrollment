@@ -4,14 +4,18 @@ import SchoolEnrollmentSystem.backend.DTOs.StudentDTO;
 import SchoolEnrollmentSystem.backend.exception.*;
 import SchoolEnrollmentSystem.backend.persistence.User;
 import SchoolEnrollmentSystem.backend.repository.ClassRepository;
+import SchoolEnrollmentSystem.backend.repository.RequestRepository;
+import SchoolEnrollmentSystem.backend.repository.SchoolRepository;
 import SchoolEnrollmentSystem.backend.repository.StudentRepository;
 import SchoolEnrollmentSystem.backend.persistence.Student;
 import SchoolEnrollmentSystem.backend.persistence.Class;
 import lombok.AllArgsConstructor;
+import org.antlr.v4.runtime.misc.LogManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 
@@ -24,6 +28,10 @@ public class StudentService {
     private ClassRepository classRepository;
     @Autowired
     private UserService userService;
+    @Autowired
+    private RequestRepository requestRepository;
+    @Autowired
+    private SchoolRepository schoolRepository;
 
 
     public Student addStudent(StudentDTO studentDTO) throws UniqueResourceExistent
@@ -159,5 +167,35 @@ public class StudentService {
             return -1;
 
         return student.getRequests().stream().toList().getFirst().getGrade();
+    }
+
+    public boolean parentHasStudentWithCNP(String parentUsername, String cnp) {
+        return studentRepository.findAll().stream()
+                .filter(student -> student.getParent().getUsername().equals(parentUsername))
+                .anyMatch(student -> student.getCnp().equals(cnp));
+    }
+
+    public void deleteStudentByCNP(String cnp)
+            throws NoSuchElementException {
+        Student studentToDelete = studentRepository.findAll().stream()
+                .filter(student -> student.getCnp().equals(cnp))
+                .toList().getFirst();
+        System.out.println("Am trecut de student");
+
+        requestRepository.deleteAll(studentToDelete.getRequests());
+        System.out.println("Am trecut de requesturi");
+        if (studentToDelete.getSchool() != null) {
+            studentToDelete.getSchool().getStudents().remove(studentToDelete);
+            schoolRepository.save(studentToDelete.getSchool());
+        }
+        System.out.println("Am trecut de scoala");
+        if (studentToDelete.getSchoolClass() != null) {
+            studentToDelete.getSchoolClass().getStudents().remove(studentToDelete);
+            classRepository.save(studentToDelete.getSchoolClass());
+        }
+
+        System.out.println("Am trecut de clasa");
+        studentRepository.delete(studentToDelete);
+        System.out.println("Am trecut de student");
     }
 }

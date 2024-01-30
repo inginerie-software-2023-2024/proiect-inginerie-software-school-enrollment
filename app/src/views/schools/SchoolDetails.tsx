@@ -1,4 +1,4 @@
-import React, { useContext } from "react"
+import React, { useContext, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { ReactReduxContext } from "react-redux"
 import "bootstrap/dist/css/bootstrap.min.css"
@@ -12,10 +12,18 @@ export const SchoolDetails = () => {
   console.log("state in school details: ", state)
   const navigate = useNavigate()
   const { school, user } = state
+
+  useEffect(() => {
+    if (localStorage.getItem("token") === null) {
+      window.location.href = "/scoli"
+    }
+  }, [])
+
   if (!user) {
     navigate("/scoli")
     return null
   }
+
   const schoolDetails = school?.value
   if (!school || !schoolDetails) return null
   console.log("school in school details: ", school)

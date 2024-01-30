@@ -5,6 +5,7 @@ import { fetchWithToken } from "../tokenUtils";
 
 const getUserByUsername = async (username: any) => {
   if(!username) return null;
+  if(!localStorage.getItem("token")) return {};
   let user: any = {};
   try{
     const { data } = await axios.get(`${domainName}/users/${username}`, {
