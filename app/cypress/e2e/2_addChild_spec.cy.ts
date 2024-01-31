@@ -1,16 +1,16 @@
 import { domainName } from "../../src/generalConstants"
 
 describe("Add Child", () => {
-  // before(() => {
-  //   cy.request({
-  //     method: "DELETE",
-  //     url: `${domainName}/students/deleteByCNP/${5179845612478}`,
-  //   }).then((response) => {
-  //     expect(response.status).to.eq(200)
-  //   })
+  before(() => {
+    cy.request({
+      method: "DELETE",
+      url: `${domainName}/students/deleteByCNP/${5179845612478}`,
+    }).then((response) => {
+      expect(response.status).to.eq(200)
+    })
 
-  //   cy.wait(2000)
-  // })
+    cy.wait(2000)
+  })
   it("User adds child in the app", () => {
     // user visits the login page
     cy.visit("/log-in")
