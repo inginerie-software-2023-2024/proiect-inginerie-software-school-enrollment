@@ -138,8 +138,8 @@ public class StudentController {
             @PathVariable Integer classId
     ) {
         Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
-        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
-        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
+        Boolean isPrincipal = jwtUtil.resolveClaims(token).get("principal", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isPrincipal == null || !isPrincipal))
             return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         String username = jwtUtil.resolveClaims(token).getSubject();
@@ -167,8 +167,8 @@ public class StudentController {
             @PathVariable Integer classId
     ) {
         Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
-        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
-        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
+        Boolean isPrincipal = jwtUtil.resolveClaims(token).get("principal", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isPrincipal == null || !isPrincipal))
             return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         String username = jwtUtil.resolveClaims(token).getSubject();
@@ -196,9 +196,9 @@ public class StudentController {
             @PathVariable Integer classId
     ) {
         Boolean isAdmin = jwtUtil.resolveClaims(token).get("admin", Boolean.class);
-        Boolean isTeacher = jwtUtil.resolveClaims(token).get("teacher", Boolean.class);
-        if((isAdmin == null || !isAdmin) && (isTeacher == null || !isTeacher))
-            return new ResponseEntity<>("Not authorized", HttpStatus.UNAUTHORIZED);
+        Boolean isPrincipal = jwtUtil.resolveClaims(token).get("principal", Boolean.class);
+        if((isAdmin == null || !isAdmin) && (isPrincipal == null || !isPrincipal))
+            return new ResponseEntity<>("Neautorizat", HttpStatus.UNAUTHORIZED);
 
         String username = jwtUtil.resolveClaims(token).getSubject();
         if((isAdmin == null || !isAdmin) && !userService.principalHasAccessToClass(username, classId))
